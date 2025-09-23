@@ -225,7 +225,8 @@ end
 
 function main(; host="127.0.0.1", port::Int=8080)
     # Seed RNG with fixed value for testing
-    Random.seed!(1234) # TODO: use RandomDevice() for production
+    # Random.seed!(1234) # debug
+    Random.seed!(RandomDevice())
     INDEX_HTML[] = load_index()
     println("Serving on http://" * host * ":" * string(port))
     HTTP.serve(handler, host, port; verbose=false)
