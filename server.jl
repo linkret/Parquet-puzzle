@@ -75,8 +75,14 @@ function handler(req::HTTP.Request)
             patt = generate_random_tiling()
             body = JSON3.write(patt)
             return HTTP.Response(200, ["Content-Type" => "application/json"], body)
-        elseif path == "/favicon.ico"
-            return HTTP.Response(204) # No Content
+        elseif path == "/favicon.ico" || path == "/icon.png"
+            icon_path = joinpath(@__DIR__, "icon.png")
+            if isfile(icon_path)
+                icon_data = read(icon_path)
+                return HTTP.Response(200, ["Content-Type" => "image/png"], icon_data)
+            else
+                return HTTP.Response(404, "Icon not found")
+            end
         else
             return HTTP.Response(404, "Not Found")
         end
