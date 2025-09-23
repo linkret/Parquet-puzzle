@@ -118,5 +118,32 @@ function solve_parquet_puzzle(pattern_str::String, central_value::Int = 0)
     end
 end
 
+# Load and sample patterns from a file, then solve them to check for digits 1, 2, or 3
+function check_no_123_in_random_patterns(pattern_file::String, nchecks::Int=100)
+    # Load patterns from file
+    patterns = open(pattern_file) do io
+        eval(Meta.parse(read(io, String)))
+    end
+    for i in 1:nchecks
+        pat = rand(patterns)
+        result = solve_parquet_puzzle(pat, 0)
+        if result[:csv] === nothing
+            println("No solution for pattern:")
+            println(pat)
+            continue
+        end
+        digits = split(result[:csv], ",")
+        if any(x -> x == "1" || x == "2" || x == "3", digits)
+            println("Digits 1, 2, or 3 found in solution for pattern:")
+            println(pat)
+            println("Solution: ", result[:csv])
+            return
+        else
+            println("Check passed for pattern.")
+        end
+    end
+    println("All checks passed for $nchecks random patterns.")
+end
+
 # Run the function with the original pattern
 # solve_parquet_puzzle(PATTERN_STR, 0)
