@@ -45,11 +45,6 @@ function load_dict(in_file)
     Dict(string(k) => (v[1], v[2]) for (k, v) in dict_json)
 end
 
-# Example usage:
-# dict = enumerate_and_solve_patterns("all_parquet_patterns.txt", "parquet_solutions.txt", 1000) # first 1000
-# dict2 = enumerate_and_solve_patterns("all_parquet_patterns.txt", "parquet_solutions.txt", 1000) # solves next 1000 patterns not yet in dict
-# loaded = load_dict("parquet_solutions.txt")
-
 using Printf
 
 function enumerate_all_parquet_patterns()
@@ -66,7 +61,7 @@ function enumerate_all_parquet_patterns()
         end
         return nothing
     end
-
+    
     function dfs()
         pos = find_first_empty()
         if pos === nothing
@@ -94,7 +89,7 @@ function enumerate_all_parquet_patterns()
             grid[r:r+2, c] .= '.'
         end
     end
-
+    
     dfs()
     @printf "Found %d patterns\n" length(patterns)
     open("all_parquet_patterns.txt", "w") do io
@@ -105,3 +100,10 @@ end
 
 # To run and dump all patterns:
 # enumerate_all_parquet_patterns()
+
+# Example usage to build or extend the dictionary of solved patterns:
+# dict = enumerate_and_solve_patterns("all_parquet_patterns.txt", "parquet_solutions.txt") # first 1000
+# dict2 = enumerate_and_solve_patterns("all_parquet_patterns.txt", "parquet_solutions.txt") # solves next 1000 patterns not yet in dict
+# loaded = load_dict("parquet_solutions.txt")
+
+return enumerate_and_solve_patterns

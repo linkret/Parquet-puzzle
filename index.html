@@ -441,8 +441,10 @@
         let k = 0;
         for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++, k++) cells[r][c].value = vals[k].trim();
         recenterCells();
-        // Automatically submit after paste to update score/status
-        document.getElementById('optimal-note').style.display = 'none';
+        // Always hide optimal note after paste
+        const note = document.getElementById('optimal-note');
+        note.style.display = 'none';
+        note.hidden = true;
         document.getElementById('submit').click();
       } catch (e) {
         alert('Paste failed: ' + e.message);
