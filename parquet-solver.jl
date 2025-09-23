@@ -1,5 +1,5 @@
 using JuMP
-using HiGHS
+using CPLEX
 using Random
 
 # 400 known tilings of 9x9 with 1x3 and 3x1 tiles - proven by Knuth et. al.
@@ -29,7 +29,7 @@ zzzuAAAvw
 """
 
 function solve_parquet_puzzle(pattern_str::String, central_value::Int = 0)
-    model = Model(HiGHS.Optimizer)
+    model = Model(CPLEX.Optimizer)
     JuMP.set_silent(model)
 
     # For timing
