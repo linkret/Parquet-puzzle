@@ -7,7 +7,7 @@ WORKDIR /app
 COPY . .
 
 # Install required Julia packages
-RUN julia -e "using Pkg; Pkg.add.(["HTTP", "Sockets", "JSON3", "Random", "JuMP", "CPLEX"]); Pkg.precompile()"
+RUN julia -e "using Pkg; Pkg.add.(["HTTP", "Sockets", "JSON3", "Random", "JuMP", "HiGHS"]); Pkg.precompile()"
 
 # Expose the port your server listens on (default 8080)
 EXPOSE 8080
