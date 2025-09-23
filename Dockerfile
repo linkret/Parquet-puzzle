@@ -11,8 +11,8 @@ RUN julia -e 'using Pkg; Pkg.add("HTTP", preserve=PRESERVE_DIRECT);'
 RUN julia -e 'using Pkg; Pkg.add("Sockets", preserve=PRESERVE_DIRECT);'
 RUN julia -e 'using Pkg; Pkg.add("JSON3", preserve=PRESERVE_DIRECT);'
 RUN julia -e 'using Pkg; Pkg.add("Random", preserve=PRESERVE_DIRECT);'
-RUN julia -e 'using Pkg; Pkg.add("JuMP", preserve=PRESERVE_DIRECT);'
-RUN julia -e 'using Pkg; Pkg.add("HiGHS", preserve=PRESERVE_DIRECT);'
+# RUN julia -e 'using Pkg; Pkg.add("JuMP", preserve=PRESERVE_DIRECT);' # no longer needed
+# RUN julia -e 'using Pkg; Pkg.add("HiGHS", preserve=PRESERVE_DIRECT);'
 
 # If you have a Project.toml/Manifest.toml, this will install exact versions
 RUN julia -e 'using Pkg; Pkg.instantiate();'
