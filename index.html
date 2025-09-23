@@ -103,19 +103,40 @@
     Puzzle by Jovan N. ÷ Website by Leonard I.
   </footer>
   <script>
-    // Calculate optimal button logic
-    document.getElementById('calc-optimal').addEventListener('click', async function () {
+    // Improved Calculate Optimal button logic: disables button, shows 'Calculating...', restores on response or after 15s, prevents spamming
+    const calcBtn = document.getElementById('calc-optimal');
+    let calcTimeout = null;
+    calcBtn.addEventListener('click', async function () {
+      if (calcBtn.disabled) return;
+      const originalText = calcBtn.textContent;
+      calcBtn.textContent = 'Calculating...';
+      calcBtn.disabled = true;
+      let finished = false;
+
+      // Failsafe: restore after 30s if server is too slow
+      calcTimeout = setTimeout(() => {
+        if (!finished) {
+          calcBtn.textContent = originalText;
+          calcBtn.disabled = false;
+        }
+      }, 30000);
+
       // Copy current user solution to clipboard
       const vals = [];
       for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) vals.push(cells[r][c].value.trim());
       const userStr = vals.join(',');
+
       try {
         await navigator.clipboard.writeText(userStr);
       } catch (e) {
         alert('Copy failed: ' + e.message);
+        finished = true;
+        clearTimeout(calcTimeout);
+        calcBtn.textContent = originalText;
+        calcBtn.disabled = false;
         return;
       }
-      // Call backend for optimal solution
+
       try {
         const res = await fetch('/calculate-optimal', {
           method: 'POST',
@@ -125,6 +146,10 @@
         const data = await res.json();
         if (!data.ok || !data.csv) {
           alert('Optimal calculation failed.');
+          finished = true;
+          clearTimeout(calcTimeout);
+          calcBtn.textContent = originalText;
+          calcBtn.disabled = false;
           return;
         }
         const roundedScore = Math.round(data.score);
@@ -133,16 +158,18 @@
         const vals = data.csv.split(',');
         if (vals.length !== 81) {
           alert('Optimal solution is invalid.');
-          return;
+        } else {
+          for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) cells[r][c].value = vals[r * 9 + c];
+          recenterCells();
+          setStatus('Optimal', roundedScore);
         }
-        let k = 0;
-        for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++, k++) cells[r][c].value = vals[k].trim();
-        recenterCells();
-        // Submit the optimal solution
-        setStatus('Optimal', roundedScore);
       } catch (e) {
         alert('Optimal calculation error: ' + e.message);
       }
+      finished = true;
+      clearTimeout(calcTimeout);
+      calcBtn.textContent = originalText;
+      calcBtn.disabled = false;
     });
     const grid = document.getElementById('grid');
     const cells = Array.from({ length: 9 }, () => Array(9));
@@ -361,7 +388,7 @@
         setTimeout(() => {
           btn.textContent = oldText;
           btn.disabled = false;
-        }, 1000);
+        }, 500);
       } catch (e) {
         alert('Copy failed: ' + e.message);
       }
