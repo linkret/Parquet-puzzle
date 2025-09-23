@@ -1,83 +1,129 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <link rel="icon" type="image/png" href="icon.png">
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Parquet Puzzle</title>
-  <style>
-    details {
-      text-align: center;
-    }
-    details > summary {
-      text-align: center;
-      list-style-position: inside;
-      width: 100%;
-    }
-    .statusval, .scoreval {
-      font-weight: 900 !important;
-      display: inline-block;
-      width: 8ch;
-      min-width: 8ch;
-      max-width: 8ch;
-      text-align: left;
-      overflow: hidden;
-      vertical-align: bottom;
-    }
-    .statusbox {
-      margin-bottom:18px;
-      text-align:center;
-      background:#38bdf8;
-      padding:8px 50px 8px 50px;
-      border-radius:10px;
-      display:inline-block;
-      min-width:270px;
-      box-shadow:0 1px 6px #0001;
-      border: 1px solid #000;
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      gap: 18px;
-    }
-    body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0f172a;color:#e5e7eb;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial}
-    .wrap{
-      background:#111827;
-      padding:20px 22px;
-      border-radius:10px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-    }
-    .grid{display:grid;grid-template-columns:repeat(9,48px);grid-template-rows:repeat(9,48px);gap:0;background:#1f2937;overflow:hidden;
-      border-style:solid;
-      border-width:1px 1px 1px 1px;
-      border-color:#000;
-      box-sizing:content-box}
-    .cell{width:48px;height:48px;border:1px solid #000;background:#16202e;color:#000;text-align:center;font-size:32px;font-weight:500;line-height:44px;outline:none;caret-color:#000;appearance:none;-webkit-appearance:none;border-radius:0;padding-top:3px;padding-left:1px;padding-right:0px;padding-bottom:0;box-sizing:border-box}
-    .actions{margin-top:12px;text-align:center}
-    button{background:#38bdf8;color:#000;border:1px solid #000;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600}
-  </style>
-</head>
-<body>
-  <div class="maincenter" style="display:flex;flex-direction:column;align-items:center;gap:0;">
-    <div class="heading" style="margin-bottom:24px;text-align:center;width:100%;display:flex;justify-content:center;">
-      <span style="display:inline-block;background:#38bdf8;color:#000;padding:10px 20px 10px 20px;border-radius:12px;font-size:2.1rem;font-weight:600;letter-spacing:0.5px;box-shadow:0 2px 8px #0002;">
-        <u> Parquet Puzzle </u>
-      </span>
-    </div>
-    <details style="margin-bottom:4px;max-width:520px;">
-      <summary style="font-size:1.1rem;font-weight:600;cursor:pointer;">🛈 Rules & Scoring</summary>
-      <div style="margin-top:10px;text-align:left;padding-left:20px;">
-        <b>RULES:</b> Fill the grid with numbers from 1 to 9 so that each colored segment bordered by a thick line contains 3 different numbers. The number in the middle must be the largest. Same digits must not touch anywhere, not even diagonally.<br><br>
-        <b>SCORING:</b> All numbers in the grid are added up. Your final result is reduced by the time spent in seconds divided by 10.
+  <head>
+    <link rel="icon" type="image/png" href="icon.png">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Parquet Puzzle</title>
+    <style>
+      details {
+        text-align: center;
+      }
+      details > summary {
+        text-align: center;
+        list-style-position: inside;
+        width: 100%;
+      }
+      .statusval, .scoreval {
+        font-weight: 900 !important;
+        display: inline-block;
+        width: 8ch;
+        min-width: 8ch;
+        max-width: 8ch;
+        text-align: left;
+        overflow: hidden;
+        vertical-align: bottom;
+      }
+      .statusbox {
+        margin-bottom: 18px;
+        text-align: center;
+        background: #38bdf8;
+        padding: 8px 50px 8px 50px;
+        border-radius: 10px;
+        display: inline-block;
+        min-width: 270px;
+        box-shadow: 0 1px 6px #0001;
+        border: 1px solid #000;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 18px;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #0f172a;
+        color: #e5e7eb;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial;
+      }
+      .wrap {
+        background: #111827;
+        padding: 20px 22px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(9, 48px);
+        grid-template-rows: repeat(9, 48px);
+        gap: 0;
+        background: #1f2937;
+        overflow: hidden;
+        border-style: solid;
+        border-width: 1px 1px 1px 1px;
+        border-color: #000;
+        box-sizing: content-box;
+      }
+      .cell {
+        width: 48px;
+        height: 48px;
+        border: 1px solid #000;
+        background: #16202e;
+        color: #000;
+        text-align: center;
+        font-size: 32px;
+        font-weight: 500;
+        line-height: 44px;
+        outline: none;
+        caret-color: #000;
+        appearance: none;
+        -webkit-appearance: none;
+        border-radius: 0;
+        padding-top: 3px;
+        padding-left: 1px;
+        padding-right: 0px;
+        padding-bottom: 0;
+        box-sizing: border-box;
+      }
+      .actions {
+        margin-top: 12px;
+        text-align: center;
+      }
+      button {
+        background: #38bdf8;
+        color: #000;
+        border: 1px solid #000;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="maincenter" style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+      <div class="heading" style="margin-bottom: 24px; text-align: center; width: 100%; display: flex; justify-content: center;">
+        <span style="display: inline-block; background: #38bdf8; color: #000; padding: 10px 20px 10px 20px; border-radius: 12px; font-size: 2.1rem; font-weight: 600; letter-spacing: 0.5px; box-shadow: 0 2px 8px #0002;">
+          <u> Parquet Puzzle </u>
+        </span>
       </div>
-    </details>
-    <div class="wrap" style="box-shadow:none;">
-      <div id="statusbox" class="statusbox">
-        <span id="status" style="font-size:20px;font-weight:500;color:#000;">Status: <span id="statusval" style="font-weight:700;">-</span></span>
-        <span id="score" style="font-size:20px;margin-left:18px;font-weight:500;color:#000;">Score: <span id="scoreval" style="font-weight:700;">-</span></span>
-      </div>
+      <details style="margin-bottom: 4px; max-width: 520px;">
+        <summary style="font-size: 1.1rem; font-weight: 600; cursor: pointer;">🛈 Rules & Scoring</summary>
+        <div style="margin-top: 10px; text-align: left; padding-left: 20px;">
+          <b>RULES:</b> Fill the grid with numbers from 1 to 9 so that each colored segment bordered by a thick line contains 3 different numbers. The number in the middle must be the largest. Same digits must not touch anywhere, not even diagonally.<br><br>
+          <b>SCORING:</b> All numbers in the grid are added up. Your final result is reduced by the time spent in seconds divided by 10.
+        </div>
+      </details>
+      <div class="wrap" style="box-shadow: none;">
+        <div id="statusbox" class="statusbox">
+          <span id="status" style="font-size: 20px; font-weight: 500; color: #000;">Status: <span id="statusval" style="font-weight: 700;">-</span></span>
+          <span id="score" style="font-size: 20px; margin-left: 18px; font-weight: 500; color: #000;">Score: <span id="scoreval" style="font-weight: 700;">-</span></span>
+        </div>
       <div class="grid" id="grid"></div>
       <div class="actions">
         <div class="button-row" style="margin-bottom:10px;">
@@ -89,18 +135,19 @@
           <button id="copy81">Copy</button>
           <button id="paste81">Paste</button>
         </div>
-        <div class="button-row">
+        <div class="button-row" style="flex-direction:column;align-items:center;">
           <button id="show-optimal">Show Optimal</button>
+          <span id="optimal-note" style="display:none;font-size:13px;color:#64748b;margin-top:6px;display:block;"><br><br>(Users old solution has been copied to the clipboard. Click "Paste" to return back to your solution.)</span>
         </div>
         <style>
-  #show-optimal { margin-top: 10px; }
+        #show-optimal { margin-top: 10px; }
         .button-row:last-child { margin-top: 14px; }
         </style>
         </div>
       </div>
     </div>
   </div>
-  <footer style="margin-top:24px;text-align:center;font-size:13px;color:#64748b;opacity:0.7;user-select:none;">
+  <footer style="margin-top:8px;text-align:center;font-size:13px;color:#64748b;opacity:0.7;user-select:none;">
     Puzzle by Jovan N. ÷ Website by Leonard I.
   </footer>
   <script>
@@ -134,7 +181,7 @@
       recenterCells();
       setStatus('Optimal', Math.round(currentOptimalScore), true);
       optimalShown = true;
-      alert('Optimal score: ' + Math.round(currentOptimalScore) + '\n\nUser\'s old solution copied to clipboard. Click the "Paste" button to go back to your own solution.');
+      document.getElementById('optimal-note').style.display = 'inline';
     });
     const grid = document.getElementById('grid');
     const cells = Array.from({ length: 9 }, () => Array(9));
@@ -324,6 +371,9 @@
       }
     }
     setStatus('-', '-');
+    
+    // Hide optimal note on page load
+    document.getElementById('optimal-note').style.display = 'none';
 
     document.getElementById('submit').addEventListener('click', async function () {
       const vals = [];
@@ -391,6 +441,9 @@
         let k = 0;
         for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++, k++) cells[r][c].value = vals[k].trim();
         recenterCells();
+        // Automatically submit after paste to update score/status
+        document.getElementById('optimal-note').style.display = 'none';
+        document.getElementById('submit').click();
       } catch (e) {
         alert('Paste failed: ' + e.message);
       }
