@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Parquet Puzzle</title>
   <style>
+    details {
+      text-align: center;
+    }
+    details > summary {
+      text-align: center;
+      list-style-position: inside;
+      width: 100%;
+    }
     .statusval, .scoreval {
       font-weight: 900 !important;
       display: inline-block;
@@ -57,6 +65,13 @@
         <u> Parquet Puzzle </u>
       </span>
     </div>
+    <details style="margin-bottom:4px;max-width:520px;">
+      <summary style="font-size:1.1rem;font-weight:600;cursor:pointer;">🛈 Rules & Scoring</summary>
+      <div style="margin-top:10px;text-align:left;padding-left:20px;">
+        <b>RULES:</b> Fill the grid with numbers from 1 to 9 so that each colored segment bordered by a thick line contains 3 different numbers. The number in the middle must be the largest. Same digits must not touch anywhere, not even diagonally.<br><br>
+        <b>SCORING:</b> All numbers in the grid are added up. Your final result is reduced by the time spent in seconds divided by 10.
+      </div>
+    </details>
     <div class="wrap" style="box-shadow:none;">
       <div id="statusbox" class="statusbox">
         <span id="status" style="font-size:20px;font-weight:500;color:#000;">Status: <span id="statusval" style="font-weight:700;">-</span></span>
@@ -332,7 +347,7 @@
       }
     });
 
-        // Copy 81 cell values as comma-separated string
+    // Copy 81 cell values as comma-separated string
     document.getElementById('copy81').addEventListener('click', async function () {
       const btn = document.getElementById('copy81');
       const vals = [];
