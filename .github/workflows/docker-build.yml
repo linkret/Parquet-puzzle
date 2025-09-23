@@ -27,3 +27,12 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/parquet-puzzle:latest
+
+      - name: Save Docker image to tar
+        run: docker save -o parquet-puzzle.tar parquet-puzzle
+
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: parquet-puzzle-image
+          path: parquet-puzzle.tar
