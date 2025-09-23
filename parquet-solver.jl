@@ -28,7 +28,7 @@ zzzuAAAvw
 
 function solve_parquet_puzzle(pattern_str::String, central_value::Int = 0)
     model = Model(HiGHS.Optimizer)
-    #JuMP.set_silent(model)
+    JuMP.set_silent(model)
 
     # For timing
     t_start = time()
