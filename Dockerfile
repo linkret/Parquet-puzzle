@@ -1,16 +1,25 @@
 FROM julia:1.11.7
 
-# Set up workdir
 WORKDIR /app
-
-# Copy your project files
 COPY . .
 
-# Install required Julia packages
-RUN julia -e "using Pkg; Pkg.add.(['HTTP', 'Sockets', 'JSON3', 'Random', 'JuMP', 'HiGHS'])"
+# Print Julia version for verification
+RUN julia --version
 
-# Expose the port your server listens on (default 8080)
+# Install required Julia packages individually, preserving direct dependencies
+RUN julia -e 'using Pkg; Pkg.add("HTTP", preserve=PRESERVE_DIRECT);'
+RUN julia -e 'using Pkg; Pkg.add("Sockets", preserve=PRESERVE_DIRECT);'
+RUN julia -e 'using Pkg; Pkg.add("JSON3", preserve=PRESERVE_DIRECT);'
+RUN julia -e 'using Pkg; Pkg.add("Random", preserve=PRESERVE_DIRECT);'
+RUN julia -e 'using Pkg; Pkg.add("JuMP", preserve=PRESERVE_DIRECT);'
+RUN julia -e 'using Pkg; Pkg.add("HiGHS", preserve=PRESERVE_DIRECT);'
+
+# Optionally, create the Julia user home (not strictly necessary for most use cases)
+RUN mkdir -p "$JULIA_USER_HOME"
+
+# If you have a Project.toml/Manifest.toml, this will install exact versions
+RUN julia -e 'using Pkg; Pkg.instantiate();'
+
 EXPOSE 8080
 
-# Restart script if it crashes
-CMD while true; do julia server.jl; sleep 2; done
+CMD ["sh", "-c", "while true; do julia server.jl; sleep 2; done"]
