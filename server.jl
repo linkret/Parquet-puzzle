@@ -223,7 +223,8 @@ function handler(req::HTTP.Request)
     end
 end
 
-function main(; host="127.0.0.1", port::Int=8080)
+# function main(; host="127.0.0.1", port::Int=8080) # 127 is localhost only
+function main(; host="0.0.0.0", port::Int=8080)
     # Seed RNG with fixed value for testing
     # Random.seed!(1234) # debug
     Random.seed!(RandomDevice())
