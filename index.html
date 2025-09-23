@@ -90,10 +90,10 @@
           <button id="paste81">Paste</button>
         </div>
         <div class="button-row">
-          <button id="calc-optimal">Calculate Optimal</button>
+          <button id="show-optimal">Show Optimal</button>
         </div>
         <style>
-        #calc-optimal { margin-top: 10px; }
+  #show-optimal { margin-top: 10px; }
         .button-row:last-child { margin-top: 14px; }
         </style>
         </div>
@@ -104,73 +104,37 @@
     Puzzle by Jovan N. ÷ Website by Leonard I.
   </footer>
   <script>
-    // Improved Calculate Optimal button logic: disables button, shows 'Calculating...', restores on response or after 15s, prevents spamming
-    const calcBtn = document.getElementById('calc-optimal');
-    let calcTimeout = null;
+    // Store optimal solution and score for current pattern
+    let currentOptimalCSV = null;
+    let currentOptimalScore = null;
+
+  const calcBtn = document.getElementById('show-optimal');
     calcBtn.addEventListener('click', async function () {
-      if (calcBtn.disabled) return;
-      const originalText = calcBtn.textContent;
-      calcBtn.textContent = 'Calculating...';
-      calcBtn.disabled = true;
-      let finished = false;
-
-      // Failsafe: restore after 30s if server is too slow
-      calcTimeout = setTimeout(() => {
-        if (!finished) {
-          calcBtn.textContent = originalText;
-          calcBtn.disabled = false;
-        }
-      }, 30000);
-
       // Copy current user solution to clipboard
       const vals = [];
       for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) vals.push(cells[r][c].value.trim());
       const userStr = vals.join(',');
-
       try {
         await navigator.clipboard.writeText(userStr);
       } catch (e) {
         alert('Copy failed: ' + e.message);
-        finished = true;
-        clearTimeout(calcTimeout);
-        calcBtn.textContent = originalText;
-        calcBtn.disabled = false;
         return;
       }
-
-      try {
-        const res = await fetch('/calculate-optimal', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pattern: currentPattern })
-        });
-        const data = await res.json();
-        if (!data.ok || !data.csv) {
-          alert('Optimal calculation failed.');
-          finished = true;
-          clearTimeout(calcTimeout);
-          calcBtn.textContent = originalText;
-          calcBtn.disabled = false;
-          return;
-        }
-        const roundedScore = Math.round(data.score);
-        alert('Optimal score: ' + roundedScore + '\n\nUser\'s old solution copied to clipboard. Click the "Paste" button to go back to your own solution.');
-        // Fill grid with optimal solution
-        const vals = data.csv.split(',');
-        if (vals.length !== 81) {
-          alert('Optimal solution is invalid.');
-        } else {
-          for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) cells[r][c].value = vals[r * 9 + c];
-          recenterCells();
-          setStatus('Optimal', roundedScore);
-        }
-      } catch (e) {
-        alert('Optimal calculation error: ' + e.message);
+      // Use locally stored optimal solution
+      if (!currentOptimalCSV || !currentOptimalScore) {
+        alert('No optimal solution available for this pattern.');
+        return;
       }
-      finished = true;
-      clearTimeout(calcTimeout);
-      calcBtn.textContent = originalText;
-      calcBtn.disabled = false;
+      const valsOpt = currentOptimalCSV.split(',');
+      if (valsOpt.length !== 81) {
+        alert('Optimal solution is invalid.');
+        return;
+      }
+      for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) cells[r][c].value = valsOpt[r * 9 + c];
+      recenterCells();
+      setStatus('Optimal', Math.round(currentOptimalScore), true);
+      optimalShown = true;
+      alert('Optimal score: ' + Math.round(currentOptimalScore) + '\n\nUser\'s old solution copied to clipboard. Click the "Paste" button to go back to your own solution.');
     });
     const grid = document.getElementById('grid');
     const cells = Array.from({ length: 9 }, () => Array(9));
@@ -315,10 +279,12 @@
       try {
         // Also clear the grid before randomizing
         document.getElementById('clear').click();
-        const res = await fetch('/random-tiling');
-        if (!res.ok) throw new Error('randomize failed');
-        const data = await res.json();
-        fillFromPattern(data.pattern);
+  const res = await fetch('/random-tiling');
+  if (!res.ok) throw new Error('randomize failed');
+  const data = await res.json();
+  fillFromPattern(data.pattern);
+  currentOptimalCSV = data.csv;
+  currentOptimalScore = data.score;
       } catch (e) {
         alert('Randomize error: ' + e.message);
       }
@@ -339,10 +305,23 @@
     // Status and score display
     const statusValEl = document.getElementById('statusval');
     const scoreValEl = document.getElementById('scoreval');
-
-    function setStatus(status, score) {
-      statusValEl.textContent = status;
-      scoreValEl.textContent = (score !== undefined && score !== null ? score : '-');
+    let userScore = null;
+    let optimalShown = false;
+    function setStatus(status, score, showOptimal=false) {
+      userScore = score;
+      let scoreText = '-';
+      if (showOptimal && currentOptimalScore) {
+        scoreText = score + ' / ' + Math.round(currentOptimalScore);
+      } else if (score !== undefined && score !== null) {
+        scoreText = score;
+      }
+      scoreValEl.textContent = scoreText;
+      // If user score matches optimal, show 'Optimal' instead of 'Valid'
+      if (showOptimal && currentOptimalScore && Math.round(score) === Math.round(currentOptimalScore)) {
+        statusValEl.textContent = 'Optimal';
+      } else {
+        statusValEl.textContent = status;
+      }
     }
     setStatus('-', '-');
 
@@ -366,7 +345,12 @@
           // Determine status from message
           let status = 'Valid';
           if (data.msg && data.msg.toLowerCase().includes('incomplete')) status = 'Incomplete';
-          setStatus(status, data.sum);
+          // If optimal has been shown, display user_score / optimal_score
+          if (optimalShown && currentOptimalScore) {
+            setStatus(status, data.sum, true);
+          } else {
+            setStatus(status, data.sum);
+          }
         } else {
           setStatus('Invalid', '-');
         }

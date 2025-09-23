@@ -3,7 +3,7 @@ using Sockets
 using JSON3
 using Random
 
-include("parquet-solver.jl")
+using JSON3
 
 const INDEX_PATH = joinpath(@__DIR__, "index.html")
 
@@ -13,58 +13,21 @@ end
 
 const INDEX_HTML = Ref("")
 
-# --- Random 9x9 tiling generator (1x3 / 3x1) ---
-function generate_random_tiling()
-    grid = fill('.', 9, 9)
-    chars = vcat(collect('a':'z'), collect('A':'Z'))
-    char_idx = Ref(1)
 
-    find_first_empty() = begin
-        for r in 1:9, c in 1:9
-            if grid[r, c] == '.'
-                return (r, c)
-            end
-        end
-        return nothing
+# --- Load precomputed parquet solutions ---
+
+const SOLUTIONS_PATH = joinpath(@__DIR__, "parquet_solutions.txt")
+function load_solutions()
+    t_start = time()
+    dict_json = open(SOLUTIONS_PATH) do io
+        JSON3.read(read(io, String))
     end
-
-    next_char!() = begin
-        ch = chars[char_idx[]]
-        char_idx[] += 1
-        ch
-    end
-
-    function solve()
-        pos = find_first_empty()
-        pos === nothing && return true
-        r, c = pos
-        for orientation in randperm(2)
-            if orientation == 1
-                if c <= 7 && grid[r, c+1] == '.' && grid[r, c+2] == '.'
-                    ch = next_char!()
-                    grid[r, c:c+2] .= ch
-                    solve() && return true
-                    char_idx[] -= 1
-                    grid[r, c:c+2] .= '.'
-                end
-            else
-                if r <= 7 && grid[r+1, c] == '.' && grid[r+2, c] == '.'
-                    ch = next_char!()
-                    grid[r:r+2, c] .= ch
-                    solve() && return true
-                    char_idx[] -= 1
-                    grid[r:r+2, c] .= '.'
-                end
-            end
-        end
-        return false
-    end
-
-    solve() || error("Failed to generate a tiling")
-    rows = [String(grid[i, :]) for i in 1:9]
-    # println(join(rows, "\n"))
-    return (; pattern = join(rows, "\n"), rows)
+    dict = Dict(k => (v[1], v[2]) for (k, v) in dict_json)
+    t_end = time()
+    println("Loaded parquet solutions: $(length(dict)) patterns in $(round(t_end-t_start, digits=3)) seconds.")
+    return dict
 end
+const PARQUET_SOLUTIONS = load_solutions()
 
 function handler(req::HTTP.Request)
     if req.method == "GET"
@@ -72,8 +35,15 @@ function handler(req::HTTP.Request)
         if path == "/" || path == "/index.html"
             return HTTP.Response(200, ["Content-Type" => "text/html; charset=utf-8"], INDEX_HTML[])
         elseif path == "/random-tiling"
-            patt = generate_random_tiling()
-            body = JSON3.write(patt)
+            # Pick a random pattern from precomputed solutions
+            patterns = collect(keys(PARQUET_SOLUTIONS))
+            if isempty(patterns)
+                return HTTP.Response(500, "No precomputed patterns available")
+            end
+            pat = patterns[rand(1:length(patterns))]
+            score, csv = PARQUET_SOLUTIONS[pat]
+            resp = (; pattern=pat, score=score, csv=csv)
+            body = JSON3.write(resp)
             return HTTP.Response(200, ["Content-Type" => "application/json"], body)
         elseif path == "/favicon.ico" || path == "/icon.png"
             icon_path = joinpath(@__DIR__, "icon.png")
@@ -88,23 +58,8 @@ function handler(req::HTTP.Request)
         end
     elseif req.method == "POST"
         path = String(req.target)
-        if path == "/calculate-optimal"
-            body_str = String(req.body)
-            data = try
-                JSON3.read(body_str)
-            catch err
-                return HTTP.Response(400, "Invalid JSON: $(err)")
-            end
-            if !haskey(data, :pattern)
-                return HTTP.Response(400, "Missing 'pattern'")
-            end
-            pattern_str = data[:pattern]
-            result = solve_parquet_puzzle(pattern_str)
-            if result[:score] === nothing || result[:csv] === nothing
-                return HTTP.Response(200, ["Content-Type" => "application/json"], JSON3.write((ok=false, msg="No optimal solution found")))
-            end
-            return HTTP.Response(200, ["Content-Type" => "application/json"], JSON3.write((ok=true, score=result[:score], csv=result[:csv])))
-        elseif path == "/submit-grid"
+        # Remove /show-optimal endpoint (no longer needed)
+        if path == "/submit-grid"
             body_str = String(req.body)
             data = try
                 JSON3.read(body_str)
@@ -229,8 +184,8 @@ function handler(req::HTTP.Request)
     end
 end
 
-# function main(; host="127.0.0.1", port::Int=8080) # 127 is localhost only
-function main(; host="0.0.0.0", port::Int=8080)
+function main(; host="127.0.0.1", port::Int=8080) # 127 is localhost only
+# function main(; host="0.0.0.0", port::Int=8080)
     # Seed RNG with fixed value for testing
     # Random.seed!(1234) # debug
     Random.seed!(RandomDevice())

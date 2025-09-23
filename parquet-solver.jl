@@ -1,5 +1,6 @@
 using JuMP
-using HiGHS
+# using HiGHS
+using CPLEX
 using Random
 
 # The parquet tiling from google docs:
@@ -27,7 +28,8 @@ zzzuAAAvw
 """
 
 function solve_parquet_puzzle(pattern_str::String, central_value::Int = 0)
-    model = Model(HiGHS.Optimizer)
+    # model = Model(HiGHS.Optimizer)
+    model = Model(CPLEX.Optimizer)
     JuMP.set_silent(model)
 
     # For timing
