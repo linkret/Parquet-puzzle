@@ -2,8 +2,6 @@ using JuMP
 using HiGHS
 using Random
 
-# 400 known tilings of 9x9 with 1x3 and 3x1 tiles - proven by Knuth et. al.
-
 # The parquet tiling from google docs:
 # aaajklwww
 # bcdjklxxx
@@ -30,27 +28,32 @@ zzzuAAAvw
 
 function solve_parquet_puzzle(pattern_str::String, central_value::Int = 0)
     model = Model(HiGHS.Optimizer)
-    JuMP.set_silent(model)
+    #JuMP.set_silent(model)
 
     # For timing
     t_start = time()
 
     # The binary approach keeps the model linear
-    @variable(model, y[1:9, 1:9, 1:9], Bin)
+    # Only allow values 4 through 9 (as 1,2,3 never appear in solutions)
+    allowed_vs = 4:9
+    @variable(model, y[1:9, 1:9, allowed_vs], Bin)
 
-    # Each cell must have exactly one value from 1 to 9
+    # Each cell must have exactly one value from allowed_vs (4:9)
     for i in 1:9, j in 1:9
-        @constraint(model, sum(y[i, j, v] for v in 1:9) == 1)
+        @constraint(model, sum(y[i, j, v] for v in allowed_vs) == 1)
     end
 
     # Fix the central cell's value to the specified central_value (if provided)
     if central_value != 0
+        if !(central_value in allowed_vs)
+            error("Central value $central_value is not allowed (must be 4-9)")
+        end
         @constraint(model, y[5, 5, central_value] == 1)
     end
 
     # No two adjacent cells (including diagonals) can have the same value.
     # These 2x2 constraints are a compact way to cover all adjacency and diagonal constraints.
-    for i in 1:8, j in 1:8, v in 1:9
+    for i in 1:8, j in 1:8, v in allowed_vs
         @constraint(model, y[i,j,v] + y[i+1,j,v] + y[i,j+1,v] + y[i+1,j+1,v] <= 1)
     end
 
@@ -59,7 +62,7 @@ function solve_parquet_puzzle(pattern_str::String, central_value::Int = 0)
     pattern = permutedims(hcat(collect.(split(pattern_str))...))
 
     # Helper for value of a cell
-    cell_value(i, j) = sum(v * y[i, j, v] for v in 1:9)
+    cell_value(i, j) = sum(v * y[i, j, v] for v in allowed_vs)
 
     # Horizontal patterns
     for i in 1:9, j in 1:7
@@ -67,7 +70,7 @@ function solve_parquet_puzzle(pattern_str::String, central_value::Int = 0)
             @constraint(model, cell_value(i, j+1) >= cell_value(i, j) + 1)
             @constraint(model, cell_value(i, j+1) >= cell_value(i, j+2) + 1)
             # Outer two cells must have different values
-            for v in 1:9
+            for v in allowed_vs
                 @constraint(model, y[i, j, v] + y[i, j+2, v] <= 1)
             end
         end
@@ -80,14 +83,14 @@ function solve_parquet_puzzle(pattern_str::String, central_value::Int = 0)
             @constraint(model, cell_value(i+1, j) >= cell_value(i, j) + 1)
             @constraint(model, cell_value(i+1, j) >= cell_value(i+2, j) + 1)
             # Outer two cells must have different values
-            for v in 1:9
+            for v in allowed_vs
                 @constraint(model, y[i, j, v] + y[i+2, j, v] <= 1)
             end
         end
     end
 
     # Maximize the sum of all values in the grid.
-    @objective(model, Max, sum(v * y[i, j, v] for i in 1:9, j in 1:9, v in 1:9))
+    @objective(model, Max, sum(v * y[i, j, v] for i in 1:9, j in 1:9, v in allowed_vs))
 
     optimize!(model)
 
@@ -99,7 +102,7 @@ function solve_parquet_puzzle(pattern_str::String, central_value::Int = 0)
         solution = value.(y)
         grid = zeros(Int, 9, 9)
         for i in 1:9, j in 1:9
-            for v in 1:9
+            for v in allowed_vs
                 if solution[i, j, v] > 0.5
                     grid[i, j] = v
                 end
