@@ -3,6 +3,15 @@ name: Build and Push Docker image
 on:
   push:
     branches: [ main ]
+    paths:
+      - Dockerfile
+      - package.json
+      - package-lock.json
+      - server.js
+      - games/**
+      - public/**
+      - routes/**
+      - .github/workflows/docker-build.yml
   workflow_dispatch:
 
 jobs:
