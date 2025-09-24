@@ -1,3 +1,97 @@
+/* Layout and heading */
+.maincenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.heading {
+  margin-bottom: 16px;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.heading-title {
+  display: inline-block;
+  background: #38bdf8;
+  color: #000;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 2.1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px #0002;
+}
+
+/* Rules section */
+.rules-details {
+  margin-bottom: 8px;
+  max-width: 520px;
+  text-align: center;
+}
+.rules-summary {
+  font-size: 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.rules-content {
+  margin-top: 10px;
+  text-align: left;
+  padding-left: 20px;
+}
+
+/* Status and score */
+.status-label {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+}
+.score-label {
+  font-size: 20px;
+  margin-left: 18px;
+  font-weight: 600;
+  color: #000;
+}
+.scoreval {
+  font-weight: 700;
+}
+
+/* Button rows */
+.button-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+.button-row.button-row-left {
+  justify-content: flex-start;
+}
+.button-row-col {
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  display: flex;
+}
+
+/* Optimal note */
+.optimal-note {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 2px;
+  z-index: 10;
+  text-align: center;
+  white-space: normal;
+  width: max-content;
+}
+span.reveal-optimal {
+  cursor: pointer;
+  color: #000;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+span.reveal-optimal:hover {
+  color: #0e52d1;
+}
 footer {
   margin-top: 8px;
   text-align: center;
@@ -15,30 +109,24 @@ details > summary {
   width: 100%;
 }
 .statusval, .scoreval {
-  font-weight: 900 !important;
+  font-weight: 700;
   display: inline-block;
-  width: 8ch;
-  min-width: 8ch;
-  max-width: 8ch;
+  min-width: 6ch;
   text-align: left;
-  overflow: hidden;
   vertical-align: bottom;
 }
 .statusbox {
   margin-bottom: 18px;
-  text-align: center;
   background: #38bdf8;
-  padding: 8px 50px 8px 50px;
+  padding: 8px 24px;
   border-radius: 10px;
-  display: inline-block;
-  min-width: 270px;
-  box-shadow: 0 1px 6px #0001;
-  border: 1px solid #000;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 18px;
+  gap: 12px;
+  box-shadow: 0 1px 6px #0001;
+  border: 1px solid #000;
 }
 body {
   margin: 0;
@@ -51,7 +139,7 @@ body {
 }
 .wrap {
   background: #111827;
-  padding: 20px 22px;
+  padding: 10px 22px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -91,8 +179,11 @@ body {
   box-sizing: border-box;
 }
 .actions {
-  margin-top: 12px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 button {
   background: #38bdf8;
@@ -106,6 +197,6 @@ button {
   transition: background 0.2s;
 }
 
-button:hover, button:focus {
+button:hover {
   background: #0ea5e9;
 }
