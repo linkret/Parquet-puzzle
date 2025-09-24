@@ -1,0 +1,99 @@
+details {
+  text-align: center;
+}
+details > summary {
+  text-align: center;
+  list-style-position: inside;
+  width: 100%;
+}
+.statusval, .scoreval {
+  font-weight: 900 !important;
+  display: inline-block;
+  width: 8ch;
+  min-width: 8ch;
+  max-width: 8ch;
+  text-align: left;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.statusbox {
+  margin-bottom: 18px;
+  text-align: center;
+  background: #38bdf8;
+  padding: 8px 50px 8px 50px;
+  border-radius: 10px;
+  display: inline-block;
+  min-width: 270px;
+  box-shadow: 0 1px 6px #0001;
+  border: 1px solid #000;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #0f172a;
+  color: #e5e7eb;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial;
+}
+.wrap {
+  background: #111827;
+  padding: 20px 22px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(9, 48px);
+  grid-template-rows: repeat(9, 48px);
+  gap: 0;
+  background: #1f2937;
+  overflow: hidden;
+  border-style: solid;
+  border-width: 1px 1px 1px 1px;
+  border-color: #000;
+  box-sizing: content-box;
+}
+.cell {
+  width: 48px;
+  height: 48px;
+  border: 1px solid #000;
+  background: #16202e;
+  color: #000;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 44px;
+  outline: none;
+  caret-color: #000;
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+  padding-top: 3px;
+  padding-left: 1px;
+  padding-right: 0px;
+  padding-bottom: 0;
+  box-sizing: border-box;
+}
+.actions {
+  margin-top: 12px;
+  text-align: center;
+}
+button {
+  background: #38bdf8;
+  color: #000;
+  border: 1px solid #000;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+#show-optimal { margin-top: 10px; }
+.button-row:last-child { margin-top: 14px; }
