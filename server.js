@@ -15,6 +15,11 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Serve Parquet Puzzle game at /parquet-puzzle
+app.get('/parquet-puzzle', (req, res) => {
+  res.sendFile(path.join(__dirname, 'games', 'parquet-puzzle', 'index.html'));
+});
+
 // Use parquet router for API endpoints
 app.use('/api/parquet', require('./routes/parquet'));
 

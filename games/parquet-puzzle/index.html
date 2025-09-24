@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="icon" type="image/png" href="icon.png">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Parquet Puzzle</title>
+  <link rel="stylesheet" href="/games/parquet-puzzle/css/main.css">
+  </head>
+  <body>
+  <div class="maincenter" style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+      <div class="heading" style="margin-bottom: 24px; text-align: center; width: 100%; display: flex; justify-content: center;">
+        <span style="display: inline-block; background: #38bdf8; color: #000; padding: 10px 20px 10px 20px; border-radius: 12px; font-size: 2.1rem; font-weight: 600; letter-spacing: 0.5px; box-shadow: 0 2px 8px #0002;">
+          <u> Parquet Puzzle </u>
+        </span>
+      </div>
+      <details style="margin-bottom: 4px; max-width: 520px;">
+        <summary style="font-size: 1.1rem; font-weight: 600; cursor: pointer;">Rules & Scoring</summary>
+        <div style="margin-top: 10px; text-align: left; padding-left: 20px;">
+          <b>RULES:</b> Fill the grid with numbers from 1 to 9 so that each colored segment bordered by a thick line contains 3 different numbers. The number in the middle must be the largest. Same digits must not touch anywhere, not even diagonally.<br><br>
+          <b>SCORING:</b> All numbers in the grid are added up. Your final result is reduced by the time spent in seconds divided by 10.
+        </div>
+      </details>
+      <div class="wrap" style="box-shadow: none;">
+        <div id="statusbox" class="statusbox">
+          <span id="status" style="font-size: 20px; font-weight: 500; color: #000;">Status: <span id="statusval" style="font-weight: 700;">-</span></span>
+          <span id="score" style="font-size: 20px; margin-left: 18px; font-weight: 500; color: #000;">Score: <span id="scoreval" style="font-weight: 700;">-</span></span>
+        </div>
+      <div class="grid" id="grid"></div>
+      <div class="actions">
+        <div class="button-row" style="margin-bottom:10px;">
+          <button id="new-game">New Game</button>
+          <button id="clear">Clear</button>
+          <button id="submit">Submit</button>
+        </div>
+        <div class="button-row">
+          <button id="copy81">Copy</button>
+          <button id="paste81">Paste</button>
+        </div>
+        <div class="button-row" style="flex-direction:column;align-items:center;">
+          <div style="position:relative; display:flex; flex-direction:column; align-items:center; width:100%;">
+            <button id="show-optimal">Show Optimal</button>
+            <span id="optimal-note" style="display:none; font-size:13px; color:#64748b; position:absolute; top:100%; left:50%; transform:translateX(-50%); background:none; margin-top:6px; z-index:10; text-align:center; white-space:normal; width:max-content;">
+              (Users old solution has been copied to the clipboard. Click "Paste" to return back to your solution.)
+            </span>
+          </div>
+        </div>
+        <style>
+        #show-optimal { margin-top: 10px; }
+        .button-row:last-child { margin-top: 14px; }
+        </style>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    Puzzle by Jovan N. ÷ Website by Leonard I.
+  </footer>
+  <script src="/games/parquet-puzzle/js/main.js"></script>
+</body>
+</html>

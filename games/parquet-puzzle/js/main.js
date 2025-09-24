@@ -79,9 +79,7 @@ document.getElementById('clear').addEventListener('click', () => {
     for (const el of row) {
       el.value = '';
       el.title = '';
-      el.style.background = '';
-      el.style.borderColor = '#000';
-      el.style.borderTopWidth = el.style.borderRightWidth = el.style.borderBottomWidth = el.style.borderLeftWidth = '1px';
+      // Only clear user input, not background or borders
     }
   }
   recenterCells();
@@ -151,21 +149,21 @@ function fillFromPattern(pattern) {
   recenterCells();
 }
 
-async function fetchRandomize() {
+async function fetchNewGame() {
   try {
     document.getElementById('clear').click();
   const res = await fetch('/api/parquet/random-tiling');
-    if (!res.ok) throw new Error('randomize failed');
+  if (!res.ok) throw new Error('new game failed');
     const data = await res.json();
     fillFromPattern(data.pattern);
     currentOptimalCSV = data.csv;
     currentOptimalScore = data.score;
   } catch (e) {
-    alert('Randomize error: ' + e.message);
+  alert('New Game error: ' + e.message);
   }
 }
-document.getElementById('randomize').addEventListener('click', fetchRandomize);
-fetchRandomize();
+document.getElementById('new-game').addEventListener('click', fetchNewGame);
+fetchNewGame();
 
 let currentPattern = null;
 const origFillFromPattern = fillFromPattern;

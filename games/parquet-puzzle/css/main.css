@@ -1,3 +1,11 @@
+footer {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+  opacity: 0.7;
+  user-select: none;
+}
 details {
   text-align: center;
 }
@@ -94,6 +102,10 @@ button {
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
+  box-shadow: 0 2px 8px #0002;
+  transition: background 0.2s;
 }
-#show-optimal { margin-top: 10px; }
-.button-row:last-child { margin-top: 14px; }
+
+button:hover, button:focus {
+  background: #0ea5e9;
+}
