@@ -262,7 +262,12 @@ export default {
         let data = this.validateGrid(grid, this.currentPattern);
         let status = 'Invalid';
         let scoreText = '-';
-        if (data.ok) {
+
+        // Check for invalid cells first!
+        if (this.invalidCells && this.invalidCells.size > 0) {
+          status = 'Invalid';
+          scoreText = '-';
+        } else if (data.ok) {
           if (data.msg === 'Empty') {
             status = 'Empty';
             scoreText = '0';
