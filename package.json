@@ -5,8 +5,7 @@
   "scripts": {
     "start": "node server.cjs",
     "dev": "nodemon server.cjs --debug",
-    "build": "vite build",
-    "serve": "node server.cjs"
+    "build": "vite build"
   },
   "keywords": [],
   "author": "",
