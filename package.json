@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.cjs",
-    "dev": "nodemon server.cjs --debug",
+    "dev": "npm run build && nodemon server.cjs --debug",
     "build": "vite build"
   },
   "keywords": [],
