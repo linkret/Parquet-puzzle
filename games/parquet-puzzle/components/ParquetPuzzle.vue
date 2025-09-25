@@ -116,15 +116,6 @@ export default {
   computed: {
     liveScore() {
       return this.cells.flat().reduce((sum, val) => sum + (parseInt(val) || 0), 0);
-    },
-    cellCoords() {
-      const coords = [];
-      for (let r = 0; r < 9; r++) {
-        for (let c = 0; c < 9; c++) {
-          coords.push({ r, c });
-        }
-      }
-      return coords;
     }
   },
   methods: {
