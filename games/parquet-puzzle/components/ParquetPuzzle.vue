@@ -332,7 +332,7 @@ export default {
         const coords = groups[label];
         coords.forEach(([r, c]) => { this.cellStyles[r][c].background = color; });
         if (coords.length === 3) {
-          const thick = '2px', dark = '#000';
+          const thick = '3px', dark = '#000';
           coords.forEach(([r, c]) => {
             if (r === 0 || !coords.some(([rr, cc]) => rr === r - 1 && cc === c))
               this.cellStyles[r][c].borderTopWidth = thick, this.cellStyles[r][c].borderTopColor = dark;
