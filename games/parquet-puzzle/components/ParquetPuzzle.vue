@@ -59,8 +59,8 @@
         <button @click="submit">Submit</button>
       </div>
       <div class="button-row">
-        <button @click="copyBoard">Copy</button>
-        <button @click="pasteBoard">Paste</button>
+        <button @click="copyBoard">{{ copyButtonText }}</button>
+        <button @click="pasteBoard">{{ pasteButtonText }}</button>
       </div>
       <div class="button-row button-row-col">
         <button @click="showOptimal">Show Optimal</button>
@@ -118,11 +118,14 @@ export default {
       score: '0',
       optimalRevealed: false,
       optimalNote: false,
+      copyButtonText: 'Copy',
+      pasteButtonText: 'Paste',
       currentPattern: '',
       currentOptimalCSV: '',
       currentOptimalScore: 0,
       errorHighlighting: true, // Toggle for error-highlighting
-      invalidCells: new Set() // Store invalid cell keys here
+      invalidCells: new Set(),
+      copiedBoard81: null,
     };
   },
   computed: {
@@ -130,7 +133,6 @@ export default {
       return this.cells.flat().reduce((sum, val) => sum + (parseInt(val) || 0), 0);
     },
     invalidCells() {
-      // Just return the data property, so it's reactive
       return this.invalidCells;
     },
   },
@@ -378,38 +380,34 @@ export default {
     revealOptimal() {
       this.optimalRevealed = true;
     },
-    async copyBoard() {
-      const csv = this.cells.flat().map(v => v.trim()).join(',');
-      try {
-        await navigator.clipboard.writeText(csv);
-      } catch (e) {
-        console.error('Copy failed:', e);
-      }
+    copyBoard() {
+      this.copiedBoard81 = this.cells.map(row => row.slice());
+      this.copyButtonText = 'Copied';
+      setTimeout(() => { this.copyButtonText = 'Copy'; }, 500);
     },
-    async pasteBoard() {
+    pasteBoard() {
       this.optimalNote = false;
-      try {
-        const str = await navigator.clipboard.readText();
-        if (str.length > 200) {
-          console.error('Paste failed: Clipboard too long.');
-          return;
-        }
-        const vals = str.split(',');
-        if (vals.length !== 81 || !vals.every(v => v === '' || (v.length === 1 && v >= '1' && v <= '9'))
-        ) {
-          console.error('Paste failed: Must be 81 entries, each empty or a digit 1-9.');
-          return;
-        }
-        for (let r = 0; r < 9; r++) {
-          for (let c = 0; c < 9; c++) {
-            this.cells[r][c] = vals[r * 9 + c].trim();
-          }
-        }
-      } catch (e) {
-        console.error('Paste failed:', e);
+      const b = this.copiedBoard81;
+      // Basic validation of copied board. Allows empty cells and single digits only
+      if (
+        !Array.isArray(b) ||
+        b.length !== 9 ||
+        b.some(row =>
+          !Array.isArray(row) ||
+          row.length !== 9 ||
+          row.some(cell =>
+            !(cell === '' || (typeof cell === 'string' && cell.length === 1 && cell >= '1' && cell <= '9'))
+          )
+        )
+      ) {
+        console.log('Paste failed: Invalid board format.');
+        return;
       }
+      this.cells = this.copiedBoard81.map(row => row.slice());
       this.onCellInput();
-    }
+      this.pasteButtonText = 'Pasted';
+      setTimeout(() => { this.pasteButtonText = 'Paste'; }, 500);
+    },
   },
   mounted() {
     this.newGame();
