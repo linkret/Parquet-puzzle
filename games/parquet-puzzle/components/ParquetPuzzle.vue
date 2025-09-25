@@ -37,6 +37,7 @@
                 class="cell"
                 :id="'cell-' + (r-1) + '-' + (c-1)"
                 @input="onCellInput()"
+                @keydown="handleArrowNav($event, r-1, c-1)"
                 :style="{
                   ...cellStyles[r-1][c-1],
                   background: errorHighlighting && invalidCells.has(`${r-1}-${c-1}`) ? alterHSL(cellStyles[r-1][c-1].background) : cellStyles[r-1][c-1].background,
@@ -167,6 +168,20 @@ export default {
       lVal = lVal.slice(0, -1);
       let l = Math.min(100, parseFloat(lVal) + increase);
       return `hsl(${h}, ${sVal}, ${l}%)`;
+    },
+    handleArrowNav(e, row, col) {
+      let newRow = row, newCol = col;
+      if (e.key === 'ArrowUp')    newRow = Math.max(0, row - 1);
+      if (e.key === 'ArrowDown')  newRow = Math.min(8, row + 1);
+      if (e.key === 'ArrowLeft')  newCol = Math.max(0, col - 1);
+      if (e.key === 'ArrowRight') newCol = Math.min(8, col + 1);
+
+      if (newRow !== row || newCol !== col) {
+        e.preventDefault();
+        const nextId = `cell-${newRow}-${newCol}`;
+        const next = document.getElementById(nextId);
+        if (next) next.focus();
+      }
     },
     validateGrid(grid, pattern) {
       const invalid = new Set();
