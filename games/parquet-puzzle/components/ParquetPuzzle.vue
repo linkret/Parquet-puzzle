@@ -18,6 +18,10 @@
           Status:
           <span id="statusval" class="statusval">{{ status }}</span>
         </span>
+        <span id="timer" class="timer-label">
+          Time:
+          <span id="timerval" class="timerval">{{ timer.toFixed(1) }}s</span>
+        </span>
         <span id="score" class="score-label">
           Score:
           <span id="scoreval" class="scoreval">
@@ -56,7 +60,13 @@
       <div class="button-row">
         <button @click="newGame">New Game</button>
         <button @click="clearBoard">Clear</button>
-        <button @click="submit">Submit</button>
+        <button
+          @click="submit"
+          :disabled="showOptimalUsed || status !== 'Valid'"
+          :class="{ disabled: showOptimalUsed || status !== 'Valid' }"
+        >
+          Submit
+        </button>
       </div>
       <div class="button-row">
         <button @click="copyBoard">{{ copyButtonText }}</button>
@@ -116,6 +126,10 @@ export default {
       cellStyles: makeStyles(),
       status: 'Empty',
       score: '0',
+      timer: 0.0,
+      timerInterval: null,
+      timerActive: false,
+      showOptimalUsed: false,
       optimalRevealed: false,
       optimalNote: false,
       copyButtonText: 'Copy',
@@ -142,8 +156,12 @@ export default {
       this.cellStyles = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => ({ })));
       this.status = 'Empty';
       this.score = '0';
+      this.timer = 0.0;
+      this.timerInterval = null;
+      this.timerActive = false;
       this.optimalNote = false;
       this.optimalRevealed = false;
+      this.showOptimalUsed = false;
       try {
         const res = await fetch('/api/parquet/random-tiling');
         if (!res.ok) throw new Error('new game failed');
@@ -152,6 +170,7 @@ export default {
         this.currentOptimalCSV = data.csv;
         this.currentOptimalScore = data.score;
         this.fillFromPattern(data.pattern);
+        this.startTimer();
       } catch (e) {
         console.error('New Game error:', e);
       }
@@ -278,12 +297,12 @@ export default {
       try {
         let data = this.validateGrid(grid, this.currentPattern);
         let status = 'Invalid';
-        let scoreText = '-';
+        let scoreText = '0';
 
         // Check for invalid cells first!
         if (this.invalidCells && this.invalidCells.size > 0) {
           status = 'Invalid';
-          scoreText = '-';
+          scoreText = '0';
         } else if (data.ok) {
           if (data.msg === 'Empty') {
             status = 'Empty';
@@ -304,12 +323,30 @@ export default {
         this.optimalNote = false;
       } catch (e) {
         this.status = 'Error';
-        this.score = '-';
+        this.score = '0';
       }
     },
     async submit() {
+      if (this.showOptimalUsed) return;
       const grid = this.cells.map(row => row.map(v => v.trim()));
-      // TODO: implement submission logic
+      const timeTaken = this.timer;
+      try {
+        const res = await fetch('/api/parquet/submit-grid', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ grid, pattern: this.currentPattern })
+        });
+        const data = await res.json();
+        let finalScore = Math.max(0, data.sum - timeTaken / 10);
+        if (data.ok) {
+          this.stopTimer();
+          alert(`${data.msg || ''}\nTime taken: ${timeTaken.toFixed(1)}s\nFinal Score: ${finalScore.toFixed(1)}`);
+        } else {
+          alert(`Invalid: ${data.msg || 'Unknown error.'}`);
+        }
+      } catch (e) {
+        alert('Submission failed: ' + (e.message || e));
+      }
     },
     fillFromPattern(pattern) {
       const rows = pattern.split('\n').map(r => r.trim());
@@ -350,10 +387,10 @@ export default {
       this.cells = Array.from({ length: 9 }, () => Array(9).fill(''));
       this.onCellInput();
     },
-    async showOptimal() {
+    showOptimal() {
       const userCSV = this.cells.flat().map(v => v.trim()).join(',');
       try {
-        await navigator.clipboard.writeText(userCSV);
+        this.copyBoard();
       } catch (e) {
         this.status = 'Copy failed';
         return;
@@ -375,6 +412,8 @@ export default {
       }
       this.optimalNote = true;
       this.optimalRevealed = true;
+      this.showOptimalUsed = true;
+      this.stopTimer();
       this.onCellInput();
     },
     revealOptimal() {
@@ -407,6 +446,19 @@ export default {
       this.onCellInput();
       this.pasteButtonText = 'Pasted';
       setTimeout(() => { this.pasteButtonText = 'Paste'; }, 500);
+    },
+    startTimer() {
+      if (this.timerInterval) clearInterval(this.timerInterval);
+      this.timer = 0.0;
+      this.timerActive = true;
+      this.timerInterval = setInterval(() => {
+        if (this.timerActive) this.timer += 0.1;
+      }, 100);
+    },
+    stopTimer() {
+      this.timerActive = false;
+      if (this.timerInterval) clearInterval(this.timerInterval);
+      this.timerInterval = null;
     },
   },
   mounted() {

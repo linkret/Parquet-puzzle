@@ -95,9 +95,9 @@ function validateGrid(grid, pattern) {
     }
   }
   if (incomplete) {
-    return { ok: true, sum: s, msg: `Valid, but incomplete. Current score: ${s}` };
+    return { ok: false, sum: s, msg: `Valid, but incomplete. Current sum: ${s}` };
   } else {
-    return { ok: true, sum: s, msg: `Valid solution! Score: ${s}` };
+    return { ok: true, sum: s, msg: `Valid solution! Sum of cells: ${s}` };
   }
 }
 
