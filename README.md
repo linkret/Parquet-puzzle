@@ -1,6 +1,6 @@
 A simple NodeJS / Vue web application for playing logical puzzles.
 
-[Click here to play!](https://parquet-puzzle-1078663927453.europe-west1.run.app/)
+[Click here to play!](https://parquet-puzzle-1078663927453.europe-west1.run.app/parquet-puzzle)
 
 ## Parquet Puzzle
 
