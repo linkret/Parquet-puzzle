@@ -6,8 +6,7 @@ on:
     paths:
       - Dockerfile
       - package.json
-      - package-lock.json
-      - server.js
+      - server.cjs
       - games/**
       - public/**
       - routes/**
