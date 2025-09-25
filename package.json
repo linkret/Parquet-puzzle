@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js --debug"
+    "start": "node server.cjs",
+    "dev": "nodemon server.cjs --debug",
+    "build": "vite build",
+    "serve": "node server.cjs"
   },
   "keywords": [],
   "author": "",
@@ -12,9 +14,13 @@
   "description": "",
   "dependencies": {
     "body-parser": "^2.2.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "vue": "^3.4.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
-  }
+    "nodemon": "^3.1.10",
+    "vite": "^5.0.0",
+    "@vitejs/plugin-vue": "^5.0.0"
+  },
+  "type": "module"
 }

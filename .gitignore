@@ -1,3 +1,5 @@
 all_parquet_patterns.txt
 monetization.txt
 node_modules/
+dist/
+package-lock.json

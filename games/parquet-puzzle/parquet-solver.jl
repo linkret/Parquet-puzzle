@@ -152,3 +152,5 @@ end
 
 # Run the function with the original pattern
 # solve_parquet_puzzle(PATTERN_STR, 0)
+
+return solve_parquet_puzzle

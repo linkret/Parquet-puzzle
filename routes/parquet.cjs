@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getRandomTiling, validateGrid } = require('../games/parquet-puzzle/parquet');
+const { getRandomTiling, validateGrid } = require('../games/parquet-puzzle/parquet.cjs');
 
 router.get('/random-tiling', (req, res) => {
   const result = getRandomTiling();

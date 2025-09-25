@@ -6,6 +6,9 @@ COPY . .
 # Install dependencies
 RUN npm install
 
+# Install Vite and build the Vue app
+RUN npm run build
+
 EXPOSE 8080
 
-CMD ["node", "server.js"]
+CMD ["node", "server.cjs"]
