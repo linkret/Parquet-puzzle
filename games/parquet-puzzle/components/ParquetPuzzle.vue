@@ -30,14 +30,23 @@
       <div class="grid">
         <template v-for="r in 9" :key="r">
           <template v-for="c in 9" :key="c">
-            <input
-            v-model="cells[r-1][c-1]"
-            maxlength="1"
-            class="cell"
-            :id="'cell-' + (r-1) + '-' + (c-1)"
-            :style="cellStyles[r-1][c-1]"
-            @input="onCellInput()"
-            />
+            <div class="cell-wrapper" style="position: relative; display: inline-block;">
+              <input
+                v-model="cells[r-1][c-1]"
+                maxlength="1"
+                class="cell"
+                :id="'cell-' + (r-1) + '-' + (c-1)"
+                @input="onCellInput()"
+                :style="{
+                  ...cellStyles[r-1][c-1],
+                  background: errorHighlighting && invalidCells.has(`${r-1}-${c-1}`) ? alterHSL(cellStyles[r-1][c-1].background) : cellStyles[r-1][c-1].background,
+                }"
+              />
+              <div
+                v-if="errorHighlighting && invalidCells.has(`${r-1}-${c-1}`)"
+                class="error-overlay"
+              ></div>
+            </div>
           </template>
         </template>
       </div>
@@ -110,13 +119,19 @@ export default {
       optimalNote: false,
       currentPattern: '',
       currentOptimalCSV: '',
-      currentOptimalScore: 0
+      currentOptimalScore: 0,
+      errorHighlighting: true, // Toggle for error-highlighting
+      invalidCells: new Set() // Store invalid cell keys here
     };
   },
   computed: {
     liveScore() {
       return this.cells.flat().reduce((sum, val) => sum + (parseInt(val) || 0), 0);
-    }
+    },
+    invalidCells() {
+      // Just return the data property, so it's reactive
+      return this.invalidCells;
+    },
   },
   methods: {
     async newGame() {
@@ -138,10 +153,29 @@ export default {
         console.error('New Game error:', e);
       }
     },
+    alterHSL(hsl, increase = -20) {
+      // Remove 'hsl(' and ')', then split by ','
+      let s = hsl.trim();
+      if (!s.startsWith('hsl(') || !s.endsWith(')')) return hsl;
+      s = s.slice(4, -1); // remove 'hsl(' and ')'
+      const parts = s.split(',').map(x => x.trim());
+      if (parts.length !== 3) return hsl;
+      const h = parts[0];
+      const sVal = parts[1];
+      let lVal = parts[2];
+      if (!lVal.endsWith('%')) return hsl;
+      lVal = lVal.slice(0, -1);
+      let l = Math.min(100, parseFloat(lVal) + increase);
+      return `hsl(${h}, ${sVal}, ${l}%)`;
+    },
     validateGrid(grid, pattern) {
-      // ...existing code from vue-app.js...
-      if (!grid || !pattern) return { ok: false, msg: 'Missing grid or pattern' };
+      const invalid = new Set();
+      if (!grid || !pattern) {
+        this.invalidCells = invalid;
+        return { ok: false, msg: 'Missing grid or pattern' };
+      }
       if (!Array.isArray(grid) || grid.length !== 9 || grid.some(row => !Array.isArray(row) || row.length !== 9)) {
+        this.invalidCells = invalid;
         return { ok: false, msg: 'Grid must be 9x9 array.' };
       }
       const vals = Array.from({ length: 9 }, (_, i) =>
@@ -156,6 +190,7 @@ export default {
           return null;
         })
       );
+      // Adjacent same digits (including diagonals)
       for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
           const v = vals[i][j];
@@ -166,7 +201,8 @@ export default {
               const ni = i + di, nj = j + dj;
               if (ni >= 0 && ni < 9 && nj >= 0 && nj < 9) {
                 if (vals[ni][nj] === v) {
-                  return { ok: false, msg: 'Adjacent cells (including diagonals) cannot have the same value' };
+                  invalid.add(`${i}-${j}`);
+                  invalid.add(`${ni}-${nj}`);
                 }
               }
             }
@@ -175,6 +211,7 @@ export default {
       }
       const rows = pattern.split('\n').map(row => row.trim());
       if (rows.length !== 9 || rows.some(r => r.length !== 9)) {
+        this.invalidCells = invalid;
         return { ok: false, msg: 'Pattern must be 9x9 string.' };
       }
       const labelCoords = {};
@@ -189,9 +226,7 @@ export default {
         if (coords.length !== 3) continue;
         const isHoriz = coords[0][0] === coords[1][0] && coords[1][0] === coords[2][0];
         const isVert = coords[0][1] === coords[1][1] && coords[1][1] === coords[2][1];
-        if (!(isHoriz || isVert)) {
-          return { ok: false, msg: 'Invalid tile shape' };
-        }
+        if (!(isHoriz || isVert)) continue;
         const valsTile = coords.map(([i, j]) => vals[i][j]);
         if (valsTile.some(x => x == null)) continue;
         let coordsSorted;
@@ -199,12 +234,13 @@ export default {
         else coordsSorted = coords.slice().sort((a, b) => a[0] - b[0]);
         const [v1, v2, v3] = coordsSorted.map(([i, j]) => vals[i][j]);
         if (!(v2 > v1 && v2 > v3)) {
-          return { ok: false, msg: 'Middle cell of each tile must be largest' };
+          coordsSorted.forEach(([i, j]) => invalid.add(`${i}-${j}`));
         }
         if (v1 === v3) {
-          return { ok: false, msg: 'Ends of each tile must be different' };
+          coordsSorted.forEach(([i, j]) => invalid.add(`${i}-${j}`));
         }
       }
+      this.invalidCells = invalid;
       let s = 0, incomplete = false, filled = 0;
       for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {

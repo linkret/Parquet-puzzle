@@ -151,7 +151,7 @@ body {
   grid-template-rows: repeat(9, 48px);
   gap: 0;
   background: #1f2937;
-  overflow: hidden;
+  overflow: visible;
   border-style: solid;
   border-width: 1px 1px 1px 1px;
   border-color: #000;
@@ -177,6 +177,15 @@ body {
   padding-right: 0px;
   padding-bottom: 0;
   box-sizing: border-box;
+}
+.error-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border: 2px solid red;
+  border-radius: 1px;
+  outline: 2px solid red;
+  pointer-events: none;
+  z-index: 2;
 }
 .actions {
   text-align: center;
