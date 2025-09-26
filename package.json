@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node server.cjs",
     "dev": "npm run build && nodemon server.cjs --debug",
-    "build": "vite build"
+    "build": "vite build",
+    "dev-db": "node db/setup-sqlite.cjs"
   },
   "keywords": [],
   "author": "",
@@ -14,12 +15,13 @@
   "dependencies": {
     "body-parser": "^2.2.0",
     "express": "^5.1.0",
+    "sqlite3": "^5.1.7",
     "vue": "^3.4.0"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
     "nodemon": "^3.1.10",
-    "vite": "^5.0.0",
-    "@vitejs/plugin-vue": "^5.0.0"
+    "vite": "^5.0.0"
   },
   "type": "module"
 }
