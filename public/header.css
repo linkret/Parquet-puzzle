@@ -1,0 +1,15 @@
+.site-topbar{width:100%;background:#111827;border-bottom:1px solid #263244;color:#e5e7eb}
+.site-topbar .container{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#38bdf8;font-weight:700}
+.brand .logo{width:28px;height:28px;border-radius:8px;background:#0f172a;border:1px solid #38bdf857;display:inline-grid;place-items:center;font-size:14px}
+.site-nav{display:flex;align-items:center;gap:14px;list-style:none;margin:0;padding:0}
+.site-nav a{color:#e5e7eb;text-decoration:none;font-weight:500}
+.site-nav a:hover{color:#38bdf8}
+.dropdown{position:relative}
+.dropdown summary{list-style:none;cursor:pointer}
+.dropdown summary::-webkit-details-marker{display:none}
+.dropdown[open] summary{color:#38bdf8}
+.menu{position:absolute;top:100%;right:0;background:#0f172a;border:1px solid #263244;border-radius:10px;padding:8px 0;min-width:200px;box-shadow:0 10px 30px #0006;z-index:10}
+.menu a{display:block;padding:8px 14px}
+.menu a[aria-disabled="true"]{color:#9ca3af;cursor:not-allowed}
+.menu a[aria-disabled="true"]:hover{background:transparent;color:#9ca3af}

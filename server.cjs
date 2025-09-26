@@ -33,6 +33,20 @@ app.get('/parquet-puzzle', (req, res) => {
   res.sendFile(path.join(viteDistPath, 'games/parquet-puzzle/parquet-puzzle.html'));
 });
 
+// Static informational pages
+app.get('/about', (req, res) => {
+  res.sendFile(path.join(viteDistPath, 'about.html'));
+});
+app.get('/contact', (req, res) => {
+  res.sendFile(path.join(viteDistPath, 'contact.html'));
+});
+app.get('/faq', (req, res) => {
+  res.sendFile(path.join(viteDistPath, 'faq.html'));
+});
+app.get('/game-picker', (req, res) => {
+  res.sendFile(path.join(viteDistPath, 'game-picker.html'));
+});
+
 // Use parquet router for API endpoints
 app.use('/api/parquet', require('./routes/parquet.cjs'));
 
