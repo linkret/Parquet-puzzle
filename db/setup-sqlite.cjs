@@ -39,13 +39,13 @@ db.serialize(() => {
       username TEXT NOT NULL,
       user_id INTEGER NOT NULL,
       score REAL NOT NULL,
-      game INTEGER NOT NULL,
-      difficulty INTEGER NOT NULL,
+      game_id INTEGER NOT NULL,
+      difficulty_id INTEGER NOT NULL,
       time REAL NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id),
-      FOREIGN KEY (game) REFERENCES games(id),
-      FOREIGN KEY (difficulty) REFERENCES difficulties(id)
+      FOREIGN KEY (game_id) REFERENCES games(id),
+      FOREIGN KEY (difficulty_id) REFERENCES difficulties(id)
     )
   `);
 
@@ -59,9 +59,9 @@ db.serialize(() => {
 
   db.run(`INSERT INTO users (username) VALUES ('Guest')`);
 
-  db.run(`INSERT INTO scoreboard (username, user_id, score, game, difficulty, time) VALUES ('Alic3', 1, 312.67, 1, 2, 121.87)`);
-  db.run(`INSERT INTO scoreboard (username, user_id, score, game, difficulty, time) VALUES ('Bo8', 1, 255.14, 1, 2, 90.55)`);
-  db.run(`INSERT INTO scoreboard (username, user_id, score, game, difficulty, time) VALUES ('Candic33', 1, 432.91, 1, 2, 257.32)`);
+  db.run(`INSERT INTO scoreboard (username, user_id, score, game_id, difficulty_id, time) VALUES ('Alic3', 1, 312.67, 1, 2, 121.87)`);
+  db.run(`INSERT INTO scoreboard (username, user_id, score, game_id, difficulty_id, time) VALUES ('Bo8', 1, 255.14, 1, 2, 90.55)`);
+  db.run(`INSERT INTO scoreboard (username, user_id, score, game_id, difficulty_id, time) VALUES ('Candic33', 1, 432.91, 1, 2, 257.32)`);
 });
 
 db.close();

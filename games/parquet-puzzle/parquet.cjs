@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const db = require('@db');
 
 // Load parquet solutions
 const solutionsPath = path.join(__dirname, 'parquet_solutions.txt');
@@ -101,4 +102,49 @@ function validateGrid(grid, pattern) {
   }
 }
 
-module.exports = { getRandomTiling, validateGrid };
+function isValidUsername(username) {
+  if (typeof username !== 'string' || username.length < 1 || username.length > 15) return false;
+  // Only ASCII letters, then optional digits, no letters after digits
+  let seenDigit = false;
+  for (let i = 0; i < username.length; ++i) {
+    const c = username[i];
+    if (c >= '0' && c <= '9') {
+      seenDigit = true;
+    } else if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+      if (seenDigit) return false; // letter after digit
+    } else {
+      return false; // not a letter or digit
+    }
+  }
+  return true;
+}
+
+async function submitScore(username, user_id, game, score, time, difficulty) {
+  // Validate username
+  if (!isValidUsername(username)) {
+    return { ok: false, msg: 'Invalid username format.' };
+  }
+  // Validate types and lengths
+  if (
+    typeof score !== 'number' ||
+    typeof time !== 'number' ||
+    typeof game !== 'string' ||
+    typeof difficulty !== 'string' ||
+    game.length < 1 || game.length > 15 ||
+    difficulty.length < 1 || difficulty.length > 15
+  ) {
+    return { ok: false, msg: 'Missing or invalid score/time/game/difficulty.' };
+  }
+
+  try {
+    const difficultyId = await getDifficultyId(difficulty);
+    const gameId = await getGameId(game);
+    // Insert score with correct column order
+    const id = await insertScore({ username, user_id, score, game: gameId, difficultyId, time });
+    return { ok: true, id };
+  } catch (err) {
+    return { ok: false, msg: err.message };
+  }
+}
+
+module.exports = { getRandomTiling, validateGrid, submitScore };

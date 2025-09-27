@@ -1,7 +1,16 @@
 
+require('module-alias/register');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+
+let randomFunc = Math.random;
+if (process.env.DEBUG || process.argv.includes('--debug')) {
+  // Only require seedrandom in dev/debug mode
+  const seedrandom = require('seedrandom');
+  randomFunc = seedrandom('4321');
+}
+global.random = randomFunc;
 
 const app = express();
 const PORT = process.env.PORT || 8080;
