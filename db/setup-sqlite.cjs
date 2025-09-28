@@ -54,7 +54,7 @@ db.serialize(() => {
   db.run(`INSERT INTO games (id, name) VALUES (2, 'Sudokuzzle')`);
 
   db.run(`INSERT INTO difficulties (id, name) VALUES (1, 'Easy')`);
-  db.run(`INSERT INTO difficulties (id, name) VALUES (2, 'Medium')`);
+  db.run(`INSERT INTO difficulties (id, name) VALUES (2, 'Normal')`);
   db.run(`INSERT INTO difficulties (id, name) VALUES (3, 'Hard')`);
 
   db.run(`INSERT INTO users (username) VALUES ('Guest')`);

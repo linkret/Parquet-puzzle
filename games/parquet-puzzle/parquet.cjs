@@ -138,10 +138,9 @@ async function submitScore(username, user_id, game, score, time, difficulty) {
   }
 
   try {
-    const difficultyId = await getDifficultyId(difficulty);
-    const gameId = await getGameId(game);
-    // Insert score with correct column order
-    const id = await insertScore({ username, user_id, score, game: gameId, difficultyId, time });
+    const difficulty_id = await db.getDifficultyId(difficulty);
+    const game_id = await db.getGameId(game);
+    const id = await db.insertScore({ username, user_id, score, game_id, difficulty_id, time });
     return { ok: true, id };
   } catch (err) {
     return { ok: false, msg: err.message };

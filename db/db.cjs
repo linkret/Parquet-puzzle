@@ -30,7 +30,11 @@ function insertScore({ username, user_id, score, game_id, difficulty_id, time })
       'INSERT INTO scoreboard (username, user_id, score, game_id, difficulty_id, time) VALUES (?, ?, ?, ?, ?, ?)',
       [username, user_id, score, game_id, difficulty_id, time],
       function (err) {
-        if (err) return reject(err);
+        console.log('Inserting row:', { username, user_id, score, game_id, difficulty_id, time });
+        if (err) {
+            console.error('Insert error:', err);
+            return reject(err);
+        }
         resolve(this.lastID);
       }
     );

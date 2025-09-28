@@ -327,17 +327,38 @@ export default {
       if (this.showOptimalUsed) return;
       const grid = this.cells.map(row => row.map(v => v.trim()));
       const timeTaken = this.timer;
+      const score = this.liveScore;
+      
+      const username = 'Guest';
+      const user_id = 1;
+      const game = 'Parquezzle'; // must match games table
+      const difficulty = 'Normal'; // must match difficulties table
+
       try {
+        let finalScore = Math.max(0, score - timeTaken / 10);
         const res = await fetch('/api/parquet/submit-grid', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ grid, pattern: this.currentPattern })
+          body: JSON.stringify({
+            grid,
+            pattern: this.currentPattern,
+            username,
+            user_id,
+            game,
+            score: finalScore,
+            time: timeTaken,
+            difficulty
+          })
         });
+        if (!res.ok) {
+          const errMsg = await res.text();
+          alert('Submission failed: ' + errMsg);
+          return;
+        }
         const data = await res.json();
-        let finalScore = Math.max(0, data.sum - timeTaken / 10);
         if (data.ok) {
           this.stopTimer();
-          alert(`${data.msg || ''}\nTime taken: ${timeTaken.toFixed(1)}s\nFinal Score: ${finalScore.toFixed(1)}`);
+          alert(`Valid! Sum of cells: ${data.validation.sum}\nTime taken: ${timeTaken.toFixed(1)}s\nFinal Score: ${finalScore.toFixed(1)}`);
         } else {
           alert(`Invalid: ${data.msg || 'Unknown error.'}`);
         }
