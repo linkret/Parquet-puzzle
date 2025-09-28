@@ -1,88 +1,87 @@
 <template>
-  <div class="maincenter">
-    <div class="heading">
-      <span class="heading-title">
-        <u> Parquet Puzzle </u>
+  <div class="heading">
+    <!--span class="heading-title"-->
+      <u> Parquet Puzzle </u>
+    <!--/span-->
+  </div>
+  <details class="rules-details">
+    <summary class="rules-summary">Rules & Scoring</summary>
+    <div class="rules-content">
+      <b>RULES:</b> Fill the grid with numbers from 1 to 9 so that each colored segment bordered by a thick line contains 3 different numbers. The number in the middle must be the largest. Same digits must not touch anywhere, not even diagonally.<br><br>
+      <b>SCORING:</b> All numbers in the grid are added up. Your final result is reduced by the time spent in seconds divided by 10.
+    </div>
+  </details>
+  <div class="wrap">
+    <div id="statusbox" class="statusbox">
+      <span id="status" class="status-label">
+        Status:
+        <span id="statusval" class="statusval">{{ status }}</span>
+      </span>
+      <span id="timer" class="timer-label">
+        Time:
+        <span id="timerval" class="timerval">{{ timer.toFixed(1) }}s</span>
+      </span>
+      <span id="score" class="score-label">
+        Score:
+        <span id="scoreval" class="scoreval">
+          {{ liveScore }} /
+          <span v-if="optimalRevealed">{{ Math.round(currentOptimalScore) }}</span>
+          <span v-else @click="revealOptimal" class="reveal-optimal">???</span>
+        </span>
       </span>
     </div>
-    <details class="rules-details">
-      <summary class="rules-summary">Rules & Scoring</summary>
-      <div class="rules-content">
-        <b>RULES:</b> Fill the grid with numbers from 1 to 9 so that each colored segment bordered by a thick line contains 3 different numbers. The number in the middle must be the largest. Same digits must not touch anywhere, not even diagonally.<br><br>
-        <b>SCORING:</b> All numbers in the grid are added up. Your final result is reduced by the time spent in seconds divided by 10.
-      </div>
-    </details>
-    <div class="wrap">
-      <div id="statusbox" class="statusbox">
-        <span id="status" class="status-label">
-          Status:
-          <span id="statusval" class="statusval">{{ status }}</span>
-        </span>
-        <span id="timer" class="timer-label">
-          Time:
-          <span id="timerval" class="timerval">{{ timer.toFixed(1) }}s</span>
-        </span>
-        <span id="score" class="score-label">
-          Score:
-          <span id="scoreval" class="scoreval">
-            {{ liveScore }} /
-            <span v-if="optimalRevealed">{{ Math.round(currentOptimalScore) }}</span>
-            <span v-else @click="revealOptimal" class="reveal-optimal">???</span>
-          </span>
-        </span>
-      </div>
-      <div class="grid">
-        <template v-for="r in 9" :key="r">
-          <template v-for="c in 9" :key="c">
-            <div class="cell-wrapper" style="position: relative; display: inline-block;">
-              <input
-                v-model="cells[r-1][c-1]"
-                maxlength="1"
-                class="cell"
-                :id="'cell-' + (r-1) + '-' + (c-1)"
-                @input="onCellInput()"
-                @keydown="handleArrowNav($event, r-1, c-1)"
-                :style="{
-                  ...cellStyles[r-1][c-1],
-                  background: errorHighlighting && invalidCells.has(`${r-1}-${c-1}`) ? alterHSL(cellStyles[r-1][c-1].background) : cellStyles[r-1][c-1].background,
-                }"
-              />
-              <div
-                v-if="errorHighlighting && invalidCells.has(`${r-1}-${c-1}`)"
-                class="error-overlay"
-              ></div>
-            </div>
-          </template>
+    <div class="grid">
+      <template v-for="r in 9" :key="r">
+        <template v-for="c in 9" :key="c">
+          <div class="cell-wrapper" style="position: relative; display: inline-block;">
+            <input
+              v-model="cells[r-1][c-1]"
+              maxlength="1"
+              class="cell"
+              :id="'cell-' + (r-1) + '-' + (c-1)"
+              @input="onCellInput()"
+              @keydown="handleArrowNav($event, r-1, c-1)"
+              :style="{
+                ...cellStyles[r-1][c-1],
+                background: errorHighlighting && invalidCells.has(`${r-1}-${c-1}`) ? alterHSL(cellStyles[r-1][c-1].background) : cellStyles[r-1][c-1].background,
+              }"
+            />
+            <div
+              v-if="errorHighlighting && invalidCells.has(`${r-1}-${c-1}`)"
+              class="error-overlay"
+            ></div>
+          </div>
         </template>
-      </div>
+      </template>
     </div>
-    <div class="actions">
-      <div class="button-row">
-        <button @click="newGame">New Game</button>
-        <button @click="clearBoard">Clear</button>
-        <button
-          @click="submit"
-          :disabled="showOptimalUsed || (status !== 'Valid' && status !== 'Optimal')"
-          :class="{ disabled: showOptimalUsed || (status !== 'Valid' && status !== 'Optimal') }"
-        >
-          Submit
-        </button>
-      </div>
-      <div class="button-row">
-        <button @click="copyBoard">{{ copyButtonText }}</button>
-        <button @click="pasteBoard">{{ pasteButtonText }}</button>
-      </div>
-      <div class="button-row button-row-col">
-        <button @click="showOptimal">Show Optimal</button>
-        <span v-if="optimalNote" class="optimal-note">
-          (Users old solution has been copied to the clipboard. Click "Paste" to return back to your solution.)
-        </span>
-      </div>
+  </div>
+  <div class="actions">
+    <div class="button-row">
+      <button @click="newGame">New Game</button>
+      <button @click="clearBoard">Clear</button>
+      <button
+        @click="submit"
+        :disabled="showOptimalUsed || (status !== 'Valid' && status !== 'Optimal')"
+        :class="{ disabled: showOptimalUsed || (status !== 'Valid' && status !== 'Optimal') }"
+      >
+        Submit
+      </button>
+    </div>
+    <div class="button-row">
+      <button @click="copyBoard">{{ copyButtonText }}</button>
+      <button @click="pasteBoard">{{ pasteButtonText }}</button>
+    </div>
+    <div class="button-row button-row-col">
+      <button @click="showOptimal">Show Optimal</button>
+      <span v-if="optimalNote" class="optimal-note">
+        (Users old solution has been copied to the clipboard. Click "Paste" to return back to your solution.)
+      </span>
     </div>
   </div>
 </template>
 
 <script>
+import '../../../public/main.css';
 import '../css/main.css';
 
 // 27 visually distinct colors for tile labels a-z and A (for 27 tiles)

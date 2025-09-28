@@ -1,8 +1,7 @@
 (function(){
   const current = window.location.pathname.replace(/\/$/, '') || '/';
   const pages = [
-    {href:'/', label:'Home'},
-    {href:'/about', label:'About Us'},
+    {href:'/about', label:'About'},
     {href:'/contact', label:'Contact'},
     {href:'/faq', label:'FAQ'},
   ];
@@ -16,19 +15,17 @@
 
   const header = `
   <header class="site-topbar">
-    <div class="container">
+    <div class="nav-container">
       <a href="/" class="brand"><span class="logo">DP</span> Daily Puzzle</a>
-      <nav aria-label="Primary">
-        <ul class="site-nav">
-          ${navLinks}
-          <li class="dropdown">
-            <details>
-              <summary>Game Picker</summary>
-              <div class="menu" role="menu">${gameLinks}</div>
-            </details>
-          </li>
-        </ul>
-      </nav>
+      <ul class="site-nav">
+        ${navLinks}
+        <li class="dropdown">
+          <details>
+            <summary>Games</summary>
+            <div class="menu" role="menu">${gameLinks}</div>
+          </details>
+        </li>
+      </ul>
     </div>
   </header>`;
 
