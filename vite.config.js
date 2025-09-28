@@ -13,10 +13,6 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         'parquet-puzzle': resolve(__dirname, 'games/parquet-puzzle/parquet-puzzle.html'),
-        about: resolve(__dirname, 'about.html'),
-        contact: resolve(__dirname, 'contact.html'),
-        faq: resolve(__dirname, 'faq.html'),
-        'game-picker': resolve(__dirname, 'game-picker.html'),
       }
     }
   }
