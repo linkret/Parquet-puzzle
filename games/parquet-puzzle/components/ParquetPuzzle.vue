@@ -40,11 +40,14 @@
               class="cell"
               :id="'cell-' + (r-1) + '-' + (c-1)"
               @input="onCellInput()"
-              @keydown="handleArrowNav($event, r-1, c-1)"
+              @keydown="handleCellKey($event, r-1, c-1)"
               :style="{
                 ...cellStyles[r-1][c-1],
                 background: errorHighlighting && invalidCells.has(`${r-1}-${c-1}`) ? alterHSL(cellStyles[r-1][c-1].background) : cellStyles[r-1][c-1].background,
               }"
+              type="tel"
+              inputmode="numeric"
+              pattern="[1-9]"
             />
             <div
               v-if="errorHighlighting && invalidCells.has(`${r-1}-${c-1}`)"
@@ -186,20 +189,6 @@ export default {
       let l = Math.min(100, parseFloat(lVal) + increase);
       return `hsl(${h}, ${sVal}, ${l}%)`;
     },
-    handleArrowNav(e, row, col) {
-      let newRow = row, newCol = col;
-      if (e.key === 'ArrowUp')    newRow = Math.max(0, row - 1);
-      if (e.key === 'ArrowDown')  newRow = Math.min(8, row + 1);
-      if (e.key === 'ArrowLeft')  newCol = Math.max(0, col - 1);
-      if (e.key === 'ArrowRight') newCol = Math.min(8, col + 1);
-
-      if (newRow !== row || newCol !== col) {
-        e.preventDefault();
-        const nextId = `cell-${newRow}-${newCol}`;
-        const next = document.getElementById(nextId);
-        if (next) next.focus();
-      }
-    },
     validateGrid(grid, pattern) {
       const invalid = new Set();
       if (!grid || !pattern) {
@@ -286,6 +275,28 @@ export default {
         return { ok: true, sum: s, msg: `Valid, but incomplete. Current score: ${s}` };
       } else {
         return { ok: true, sum: s, msg: `Valid solution! Score: ${s}` };
+      }
+    },
+    handleCellKey(e, row, col) {
+      // If key is a digit 1-9, replace the cell value
+      if (e.key >= '1' && e.key <= '9') {
+        this.cells[row][col] = e.key;
+        e.preventDefault(); // Prevent default input behavior
+        this.onCellInput();
+      }
+      
+      // Allow navigation keys, backspace, etc.
+      let newRow = row, newCol = col;
+      if (e.key === 'ArrowUp')    newRow = Math.max(0, row - 1);
+      if (e.key === 'ArrowDown')  newRow = Math.min(8, row + 1);
+      if (e.key === 'ArrowLeft')  newCol = Math.max(0, col - 1);
+      if (e.key === 'ArrowRight') newCol = Math.min(8, col + 1);
+
+      if (newRow !== row || newCol !== col) {
+        e.preventDefault();
+        const nextId = `cell-${newRow}-${newCol}`;
+        const next = document.getElementById(nextId);
+        if (next) next.focus();
       }
     },
     onCellInput() {
