@@ -1,7 +1,6 @@
 
 require('module-alias/register');
 const express = require('express');
-const bodyParser = require('body-parser');
 const path = require('path');
 
 let randomFunc = Math.random;
