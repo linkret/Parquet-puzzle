@@ -62,8 +62,8 @@
         <button @click="clearBoard">Clear</button>
         <button
           @click="submit"
-          :disabled="showOptimalUsed || status !== 'Valid'"
-          :class="{ disabled: showOptimalUsed || status !== 'Valid' }"
+          :disabled="showOptimalUsed || (status !== 'Valid' && status !== 'Optimal')"
+          :class="{ disabled: showOptimalUsed || (status !== 'Valid' && status !== 'Optimal') }"
         >
           Submit
         </button>
@@ -145,9 +145,6 @@ export default {
   computed: {
     liveScore() {
       return this.cells.flat().reduce((sum, val) => sum + (parseInt(val) || 0), 0);
-    },
-    invalidCells() {
-      return this.invalidCells;
     },
   },
   methods: {
@@ -463,6 +460,7 @@ export default {
   },
   mounted() {
     this.newGame();
-  }
+    window.pp = this;
+  },
 };
 </script>

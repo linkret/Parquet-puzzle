@@ -9,7 +9,8 @@ const parquetSolutions = JSON.parse(fs.readFileSync(solutionsPath, 'utf8'));
 function getRandomTiling() {
   const patterns = Object.keys(parquetSolutions);
   if (patterns.length === 0) return null;
-  const pat = patterns[Math.floor(Math.random() * patterns.length)];
+  const rand = typeof global.random === 'function' ? global.random : Math.random; // Use seeded random if available
+  const pat = patterns[Math.floor(rand() * patterns.length)];
   const [score, csv] = parquetSolutions[pat];
   return { pattern: pat, score, csv };
 }
