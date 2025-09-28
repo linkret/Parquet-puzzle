@@ -43,7 +43,12 @@
               @keydown="handleCellKey($event, r-1, c-1)"
               :style="{
                 ...cellStyles[r-1][c-1],
-                background: errorHighlighting && invalidCells.has(`${r-1}-${c-1}`) ? alterHSL(cellStyles[r-1][c-1].background) : cellStyles[r-1][c-1].background,
+                background:
+                  errorHighlighting
+                  && invalidCells.has(`${r-1}-${c-1}`)
+                  && typeof cellStyles[r-1][c-1].background === 'string'
+                  ? alterHSL(cellStyles[r-1][c-1].background)
+                  : cellStyles[r-1][c-1].background,
               }"
               type="tel"
               inputmode="numeric"
@@ -316,7 +321,7 @@ export default {
             scoreText = '0';
           } else {
             status = 'Valid';
-            if (data.msg && data.msg.toLowerCase().includes('incomplete')) status = 'Incomplete';
+            if (data.msg && data.msg.toLowerCase().includes('incomplete')) status = 'Partial';
             if (this.currentOptimalScore && Math.round(data.sum) === Math.round(this.currentOptimalScore)) {
               status = 'Optimal';
               scoreText = data.sum + ' / ' + Math.round(this.currentOptimalScore);
@@ -327,7 +332,7 @@ export default {
         }
         this.status = status;
         this.score = scoreText;
-        this.optimalNote = false;
+        //this.optimalNote = false;
       } catch (e) {
         this.status = 'Error';
         this.score = '0';

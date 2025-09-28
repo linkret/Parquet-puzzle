@@ -12,6 +12,8 @@
   max-width: 520px;
   color: #fff;
   text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 .rules-summary {
   font-size: 1.2rem;
@@ -33,11 +35,11 @@
 .timer-label {
   font-size: 20px;
   font-weight: 600;
+  margin-left: 1ch;
   color: #000;
 }
 .score-label {
   font-size: 20px;
-  margin-left: 18px;
   font-weight: 600;
   color: #000;
 }
@@ -85,14 +87,20 @@ details > summary {
   list-style-position: inside;
   width: 100%;
 }
-.statusval {
-  min-width: 8ch;
-}
 .statusval, .scoreval, .timerval {
   font-weight: 700;
   display: inline-block;
   text-align: left;
   vertical-align: bottom;
+}
+.statusval {
+  min-width: 8ch;
+}
+.scoreval {
+  min-width: 8ch;
+}
+.timerval {
+  min-width: 6ch;
 }
 .statusbox {
   margin-bottom: 18px;
@@ -147,6 +155,41 @@ details > summary {
   padding-right: 0px;
   padding-bottom: 0;
   box-sizing: border-box;
+}
+@media (max-width: 500px) {
+  .main-content .heading {
+    font-size: 1.2rem;
+    padding: 8px 16px;
+  }
+  .status-label,
+  .timer-label,
+  .score-label {
+    font-size: 1rem;
+    margin-left: 8px;
+  }
+  .statusval,
+  .scoreval,
+  .timerval {
+    min-width: 4ch;
+    font-size: 1rem;
+  }
+  .statusbox {
+    padding: 6px 12px 6px 6px;
+    gap: 5px;
+  }
+  .wrap {
+    padding: 8px 5px;
+  }
+  .grid {
+    grid-template-columns: repeat(9, 36px);
+    grid-template-rows: repeat(9, 36px);
+  }
+  .cell {
+    width: 36px;
+    height: 36px;
+    font-size: 24px;
+    line-height: 28px;
+  }
 }
 .error-overlay {
   position: absolute;
