@@ -1,8 +1,6 @@
 <template>
   <div class="heading">
-    <!--span class="heading-title"-->
-      <u> Parquet Puzzle </u>
-    <!--/span-->
+    <u> Parquet Puzzle </u>
   </div>
   <details class="rules-details">
     <summary class="rules-summary">Rules & Scoring</summary>
@@ -158,6 +156,7 @@ export default {
     async newGame() {
       this.cells = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => ''));
       this.cellStyles = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => ({ })));
+      this.invalidCells = new Set();
       this.status = 'Empty';
       this.score = '0';
       this.timer = 0.0;
