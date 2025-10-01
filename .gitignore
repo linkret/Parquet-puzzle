@@ -2,4 +2,9 @@ all_parquet_patterns.txt
 node_modules/
 dist/
 package-lock.json
-*.db
+# dotenv
+.env
+.env.local
+*.env
+# service account keys
+parquet-puzzle-*.json

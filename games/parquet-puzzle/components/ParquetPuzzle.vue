@@ -364,19 +364,22 @@ export default {
             difficulty
           })
         });
-        if (!res.ok) {
-          const errMsg = await res.text();
-          alert('Submission failed: ' + errMsg);
+        
+        let payload;
+        const ct = res.headers.get('content-type') || '';
+        if (ct.includes('application/json')) payload = await res.json();
+        else payload = { ok: false, msg: await res.text() };
+
+        if (!res.ok || !payload.ok) {
+          const msg = payload?.msg || `HTTP ${res.status}`;
+          alert(`Submission failed: ${msg}`);
           return;
         }
-        const data = await res.json();
-        if (data.ok) {
-          this.stopTimer();
-          alert(`Valid! Sum of cells: ${data.validation.sum}\nTime taken: ${timeTaken.toFixed(1)}s\nFinal Score: ${finalScore.toFixed(1)}`);
-        } else {
-          alert(`Invalid: ${data.msg || 'Unknown error.'}`);
-        }
+
+        this.stopTimer();
+        alert(`Valid! Sum: ${payload.validation?.sum ?? baseScore}\nTime: ${timeTaken.toFixed(1)}s\nFinal: ${finalScore.toFixed(1)}`);
       } catch (e) {
+        console.error(e);
         alert('Submission failed: ' + (e.message || e));
       }
     },

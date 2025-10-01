@@ -8,7 +8,6 @@ RUN npm install
 
 # Install Vite and build the Vue app
 RUN npm run build
-RUN npm run dev-db
 
 EXPOSE 8080
 

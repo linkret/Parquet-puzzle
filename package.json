@@ -4,18 +4,22 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.cjs",
-    "dev": "npm run build && nodemon server.cjs --debug",
     "build": "vite build",
-    "dev-db": "node db/setup-sqlite.cjs"
+    "dev": "npm run build && nodemon server.cjs --debug",
+    "dev:emul": "npm run firestore:seed && npm run dev",
+    "firestore:emul": "firebase emulators:start --only firestore --project parquet-puzzle",
+    "firestore:seed": "firebase emulators:exec --only firestore --project parquet-puzzle \"node db/seed-firestore.cjs\"",
+    "firestore:emul:score": "set \"FIRESTORE_EMULATOR_HOST=127.0.0.1:8088\" && node db/print-scoreboard.cjs "
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google-cloud/firestore": "^7.11.6",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "module-alias": "^2.2.3",
-    "sqlite3": "^5.1.7",
     "vue": "^3.4.0"
   },
   "devDependencies": {
@@ -26,6 +30,6 @@
   },
   "type": "module",
   "_moduleAliases": {
-    "@db": "db/db.cjs"
+    "@db": "db"
   }
 }

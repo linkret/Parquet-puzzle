@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const db = require('@db');
+const db = require('@db/db.cjs');
 
 // Load parquet solutions
 const solutionsPath = path.join(__dirname, 'parquet_solutions.txt');
@@ -121,29 +121,26 @@ function isValidUsername(username) {
 }
 
 async function submitScore(username, user_id, game, score, time, difficulty) {
-  // Validate username
   if (!isValidUsername(username)) {
     return { ok: false, msg: 'Invalid username format.' };
   }
-  // Validate types and lengths
+  // Basic type/length checks (game names stay flexible)
   if (
     typeof score !== 'number' ||
     typeof time !== 'number' ||
     typeof game !== 'string' ||
     typeof difficulty !== 'string' ||
-    game.length < 1 || game.length > 15 ||
+    game.length < 1 || game.length > 50 ||
     difficulty.length < 1 || difficulty.length > 15
   ) {
     return { ok: false, msg: 'Missing or invalid score/time/game/difficulty.' };
   }
 
   try {
-    const difficulty_id = await db.getDifficultyId(difficulty);
-    const game_id = await db.getGameId(game);
-    const id = await db.insertScore({ username, user_id, score, game_id, difficulty_id, time });
+    const id = await db.insertScore({ username, user_id, score, game, difficulty, time });
     return { ok: true, id };
   } catch (err) {
-    return { ok: false, msg: err.message };
+    return { ok: false, msg: err.message || String(err) };
   }
 }
 
