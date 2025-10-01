@@ -1,6 +1,7 @@
 // Load envs: example -> .env.local (local overrides)
 require('dotenv').config({ path: '.env.example' }); // defaults (no secrets)
 require('dotenv').config({ path: '.env.local', override: true }); // local overrides
+console.log('FIRESTORE_EMULATOR_HOST:', JSON.stringify(process.env.FIRESTORE_EMULATOR_HOST));
 
 const { Firestore, Timestamp } = require('@google-cloud/firestore');
 

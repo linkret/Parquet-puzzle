@@ -7,6 +7,7 @@ on:
       - Dockerfile
       - package.json
       - server.cjs
+      - db/db.cjs
       - games/**
       - public/**
       - routes/**
